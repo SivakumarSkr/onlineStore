@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'onlinestore.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'onlinestore',
+        'NAME': 'onlinedb',
         'USER': 'postgres',
         'PASSWORD': 'postgresql@mayant',
         'HOST': '127.0.0.1',
