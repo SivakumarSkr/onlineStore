@@ -91,3 +91,19 @@ class Order(models.Model):
 class OrderItem(models.Model):
     item = models.ForeignKey(Product, verbose_name='Product', on_delete=models.CASCADE)
     no_of_items = models.PositiveIntegerField()
+    order = models.ForeignKey(Order, verbose_name='order', on_delete=models.CASCADE, default=1)
+
+
+class Invoice(models.Model):
+    invoice_id = models.UUIDField('invoice id', default=uuid.uuid4)
+    order_id = models.OneToOneField(Order, verbose_name='Order', on_delete=models.CASCADE)
+    invoice_date = models.DateTimeField(default=datetime.datetime.now)
+
+
+class Payment(models.Model):
+    payment_date = models.DateTimeField(default=datetime.datetime.now)
+    payment_amount = models.PositiveIntegerField()
+
+
+
+

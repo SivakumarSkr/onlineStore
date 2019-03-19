@@ -8,7 +8,11 @@ from .models import *
 
 
 def view(request):
-    return HttpResponse('hello')
+    return render(request, 'index.html')
+
+
+def product(request):
+    return render(request, 'product.html')
 
 
 class CategoryList(ListView):
@@ -44,4 +48,31 @@ class ProductList(ListView):
     queryset = Product.objects.all()
 
 
-class Product
+class Product(DetailView):
+    model = Product
+    template_name = 'appstore/product.html'
+    context_object_name = 'prod'
+
+
+class CartList(ListView):
+    model = OrderItem
+    template_name = ''
+    context_object_name = 'cart'
+
+    def get_queryset(self):
+        pass
+
+
+class Order(ListView):
+    model = Order
+    template_name = ''
+    context_object_name = 'order'
+
+    def get_queryset(self):
+        pass
+
+
+class OrderDetail(DetailView):
+    model = Order
+    template_name = ''
+    context_object_name = 'orderd'
