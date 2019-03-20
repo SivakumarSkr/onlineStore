@@ -1,6 +1,13 @@
-<!DOCTYPE html>
 {% extends 'base_generic.html' %}
+{% load static %}
+{% block header %}
+<link rel="stylesheet" type="text/css" href="{% static 'styles/bootstrap4/bootstrap.min.css' %}">
+<link href="{% static 'plugins/font-awesome-4.7.0/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="{% static 'styles/cart.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'styles/cart_responsive.css' %}">
+{% endblock %}
 {% block content %}
+
 	<!-- Home -->
 
 	<div class="home">
@@ -49,7 +56,7 @@
 						<!-- Name -->
 						<div class="cart_item_product d-flex flex-row align-items-center justify-content-start">
 							<div class="cart_item_image">
-								<div><img src="images/cart_1.jpg" alt=""></div>
+								<div><img src="/media/images/cart_1.jpg" alt=""></div>
 							</div>
 							<div class="cart_item_name_container">
 								<div class="cart_item_name"><a href="#">Smart Phone Deluxe Edition</a></div>
@@ -147,11 +154,24 @@
 								</li>
 							</ul>
 						</div>
-						<div class="button checkout_button"><a href="#">Proceed to checkout</a></div>
+						<div class="button checkout_button"><a href="{% url 'online:checkout' %}">Proceed to checkout</a></div>
 					</div>
 				</div>
 			</div>
 		</div>		
 	</div>
 
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'styles/bootstrap4/popper.js' %}"></script>
+<script src="{% static 'styles/bootstrap4/bootstrap.min.js' %}"></script>
+<script src="{% static 'plugins/greensock/TweenMax.min.js' %}"></script>
+<script src="{% static 'plugins/greensock/TimelineMax.min.js' %}"></script>
+<script src="{% static 'plugins/scrollmagic/ScrollMagic.min.js' %}"></script>
+<script src="{% static 'plugins/greensock/animation.gsap.min.js' %}"></script>
+<script src="{% static 'plugins/greensock/ScrollToPlugin.min.js' %}"></script>
+<script src="{% static 'plugins/easing/easing.js' %}"></script>
+<script src="{% static 'plugins/parallax-js-master/parallax.min.js' %}"></script>
+<script src="{% static 'js/cart.js' %}"></script>
 {% endblock %}

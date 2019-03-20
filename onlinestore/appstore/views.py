@@ -19,6 +19,18 @@ def cart(request):
     return render(request, 'cart.html')
 
 
+def category(request):
+    return render(request, 'categories.html')
+
+
+def checkout(request):
+    return render(request, 'checkout.html')
+
+
+def contact(request):
+    return render(request, 'contact.html')
+
+
 class CategoryList(ListView):
     model = Category
     template_name = 'appstore/categorylist.html'
