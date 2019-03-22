@@ -31,6 +31,10 @@ def contact(request):
     return render(request, 'contact.html')
 
 
+def subcategory(request):
+    return render(request, 'subcategories.html')
+
+
 class CategoryList(ListView):
     model = Category
     template_name = 'appstore/categorylist.html'
@@ -40,39 +44,25 @@ class CategoryList(ListView):
 
 class CategoryDetail(DetailView):
     model = Category
-    template_name = 'appstore/categorydetail.html'
-    context_object_name = 'category_d'
-
-
-class SubCategoryList(ListView):
-    model = SubCategory
-    template_name = 'appstore/subcategorylist.html'
-    context_object_name = 'subcategory'
-    queryset = SubCategory.objects.all()
+    template_name = 'categories.html'
+    context_object_name = 'category'
 
 
 class SubCategoryDetail(DetailView):
     model = SubCategory
-    template_name = 'appstore/subcategorydetail.html'
+    template_name = 'categories.html'
     context_object_name = 'subcategory'
-
-
-class ProductList(ListView):
-    model = Product
-    template_name = 'appstore/productlist.html'
-    context_object_name = 'product'
-    queryset = Product.objects.all()
 
 
 class Product(DetailView):
     model = Product
-    template_name = 'appstore/product.html'
+    template_name = 'product.html'
     context_object_name = 'prod'
 
 
 class CartList(ListView):
     model = OrderItem
-    template_name = ''
+    template_name = 'cart.html'
     context_object_name = 'cart'
 
     def get_queryset(self):
@@ -92,3 +82,5 @@ class OrderDetail(DetailView):
     model = Order
     template_name = ''
     context_object_name = 'orderd'
+
+

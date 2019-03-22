@@ -9,4 +9,5 @@ urlpatterns = [
     path('category/', category, name='category'),
     path('checkout/', checkout, name='checkout'),
     path('contact/', contact, name='contact'),
+    path('subcategories/', subcategory, name='subcategory'),
 ]

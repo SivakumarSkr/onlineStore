@@ -446,6 +446,7 @@ section
 .shopping_cart
 {
 	display: inline-block;
+    margin-left:20px;
 }
 .shopping_cart a svg
 {
