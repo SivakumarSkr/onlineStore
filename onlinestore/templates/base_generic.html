@@ -74,7 +74,7 @@
 									</a>
 								</div>
 								<div class="shopping_cart" style="margin-left:20px">
-									<a href="{% url 'login' %}">
+									<a href="{% url 'login' %}?next={{ request.path }}">
 
 										<div>Log in</div>
 									</a>

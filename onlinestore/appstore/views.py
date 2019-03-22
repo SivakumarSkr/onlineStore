@@ -1,5 +1,7 @@
+from django.contrib.auth import authenticate
+from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.views.generic import *
@@ -84,3 +86,19 @@ class OrderDetail(DetailView):
     context_object_name = 'orderd'
 
 
+def sign_up(request):
+    if 'sign-up' in request.POST:
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            u = form.cleaned_data.get('username')
+            p = form.cleaned_data.get('password1')
+            user = authenticate(username=u, password=p)
+
+            return redirect('foodchain:customercreate', pk=user.id)
+        else:
+            return render(request, 'registration/login.html', {'form1': form})
+    else:
+
+        form = UserCreationForm()
+        return render(request, 'registration/login.html', {'form1': form})
