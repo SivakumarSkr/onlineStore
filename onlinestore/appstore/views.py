@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -87,18 +87,18 @@ class OrderDetail(DetailView):
 
 
 def sign_up(request):
-    if 'sign-up' in request.POST:
+    if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
             u = form.cleaned_data.get('username')
             p = form.cleaned_data.get('password1')
             user = authenticate(username=u, password=p)
-
-            return redirect('foodchain:customercreate', pk=user.id)
+            login(request, user)
+            return redirect('online:home')
         else:
-            return render(request, 'registration/login.html', {'form1': form})
+            return render(request, 'registration/signup.html', {'form': form})
     else:
 
         form = UserCreationForm()
-        return render(request, 'registration/login.html', {'form1': form})
+        return render(request, 'registration/signup.html', {'form': form})
