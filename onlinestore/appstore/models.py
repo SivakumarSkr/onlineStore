@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
+from django_resized import ResizedImageField
 
 
 # Create your models here.
@@ -33,7 +34,7 @@ class Customer(models.Model):
 
 class Category(models.Model):
     name = models.CharField('Name', max_length=20)
-    image = models.ImageField(upload_to='{}/'.format('Category'), default='category/default.jpg')
+    image = ResizedImageField(size=[500, 500], upload_to='{}/'.format('Category'), default='category/default.jpg')
     descrip = models.TextField(max_length=1000, null=True)
 
     def __str__(self):
@@ -42,9 +43,7 @@ class Category(models.Model):
 
 class SubCategory(models.Model):
     category = models.ForeignKey(Category, verbose_name='Category', on_delete=models.CASCADE)
-    name = models.CharField('Name', max_length=20)
-    image = models.ImageField(upload_to='{}/'.format('Subcategory'), default='subcategory/default'
-                                                                             '.jpg')
+    name = models.CharField('Name', max_length=35)
     descrip = models.TextField(max_length=1000)
 
     def __str__(self):
@@ -53,24 +52,25 @@ class SubCategory(models.Model):
 
 class Product(models.Model):
     product_code = models.CharField('Produce code', primary_key=True, max_length=20)
-    name = models.CharField("Name", max_length=30)
+    name = models.CharField("Name", max_length=50)
     price = models.PositiveIntegerField()
     in_stock = models.BooleanField(default=True)
     caption = models.CharField('Caption', max_length=100)
     number_of_stock = models.PositiveIntegerField()
     # description = models.TextField('About', max_length=500, null=True)
     category = models.ForeignKey(SubCategory, verbose_name='Sub category', on_delete=models.CASCADE)
+    image = ResizedImageField(size=[800, 800], upload_to='{}/'.format('image'), default='image/default.jpg')
 
     def __str__(self):
         return self.name
 
 
-class ProductImage(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Product')
-    image = models.ImageField('Image', upload_to='{}/'.format('image'), default='image/default.jpg')
-
-    def __str__(self):
-        return str(self.pk)
+# class ProductImage(models.Model):
+#     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Product')
+#     image = models.ImageField('Image', upload_to='{}/'.format('image'), default='image/default.jpg')
+#
+#     def __str__(self):
+#         return str(self.pk)
 
 
 class Description(models.Model):
@@ -103,7 +103,3 @@ class Invoice(models.Model):
 class Payment(models.Model):
     payment_date = models.DateTimeField(default=datetime.datetime.now)
     payment_amount = models.PositiveIntegerField()
-
-
-
-

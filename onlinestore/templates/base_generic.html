@@ -49,8 +49,10 @@
 											<!--<li><a href="{% url 'online:category' %}">Category</a></li>-->
 										<!--</ul>-->
 									</li>
+
+									<li><a href="#">Accessories</a></li>
 									<li><a href="{% url 'online:contact' %}">Contact</a></li>
-									<li><a href="#">Orders</a></li>
+
 									<!-- <li><a href="#">Offers</a></li>         -->
 
 								</ul>
@@ -74,18 +76,25 @@
 									</a>
 								</div>
 								<div class="shopping_cart" style="margin-left:20px">
-									{% if user.is_authenticated == False %}
+									<ul>
+										<li class="hassubs active">
+											<div class="shopping_cart">
+												<a><div>Profile</div></a>
+											</div>
+											<ul>
+												{% if user.is_authenticated %}
+												<li><a href="product.html">Account</a></li>
+												<li><a href="cart.html">Orders</a></li>
+												<li><a href="{% url 'logout' %}?next={{request.path}}">Logout</a></li>
+												{% else %}
+													<li><a href="{% url 'login' %}?next={{request.path}}">Login</a> </li>
+													<li><a href="{% url 'online:signup' %}?next={{request.path}}">Signup</a> </li>
 
-									<a href="{% url 'login' %}?next={{ request.path }}">
+												{% endif %}
 
-										<div>Log in</div>
-									</a>
-									{% else %}
-									<a href="{% url 'logout' %}?next={{ request.path }}">
-
-										<div>Log out</div>
-									</a>
-									{% endif %}
+											</ul>
+										</li>
+									</ul>
 								</div>
 
 								<!--<div class="search">-->
