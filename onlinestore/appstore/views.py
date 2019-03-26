@@ -13,9 +13,9 @@ def view(request):
     return render(request, 'index.html')
 
 
-def product(request):
-    return render(request, 'product.html')
-
+# def product(request):
+#     return render(request, 'product.html')
+#
 
 def cart(request):
     return render(request, 'cart.html')
@@ -37,6 +37,15 @@ def subcategory(request):
     return render(request, 'subcategories.html')
 
 
+class Index(TemplateView):
+    template_name = 'index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(Index, self).get_context_data(**kwargs)
+        context['index_list'] = Product.objects.all()
+        return context
+
+
 class CategoryList(ListView):
     model = Category
     template_name = 'appstore/categorylist.html'
@@ -56,7 +65,7 @@ class SubCategoryDetail(DetailView):
     context_object_name = 'subcategory'
 
 
-class Product(DetailView):
+class ProductDet(DetailView):
     model = Product
     template_name = 'product.html'
     context_object_name = 'prod'
@@ -68,7 +77,15 @@ class CartList(ListView):
     context_object_name = 'cart'
 
     def get_queryset(self):
-        pass
+        return OrderItem.objects.all()
+
+
+def cart_create(request, pk):
+    obj = OrderItem()
+    obj.item = Product.objects.get(pk=pk)
+    obj.no_of_items = 1
+    obj.save()
+    return redirect('online:cart')
 
 
 class Order(ListView):

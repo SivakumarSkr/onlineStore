@@ -4,6 +4,7 @@ import uuid
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.urls import reverse
 from phonenumber_field.modelfields import PhoneNumberField
 from django_resized import ResizedImageField
 
@@ -51,7 +52,7 @@ class SubCategory(models.Model):
 
 
 class Product(models.Model):
-    product_code = models.CharField('Produce code', primary_key=True, max_length=20)
+    product_code = models.CharField('Produce code', max_length=20)
     name = models.CharField("Name", max_length=50)
     price = models.PositiveIntegerField()
     in_stock = models.BooleanField(default=True)
@@ -64,6 +65,9 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        """Returns the url to access a particular instance of MyModelName."""
+        return reverse('product', args=[str(self.pk)])
 
 # class ProductImage(models.Model):
 #     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Product')
@@ -91,7 +95,10 @@ class Order(models.Model):
 class OrderItem(models.Model):
     item = models.ForeignKey(Product, verbose_name='Product', on_delete=models.CASCADE)
     no_of_items = models.PositiveIntegerField()
-    order = models.ForeignKey(Order, verbose_name='order', on_delete=models.CASCADE, default=1)
+    order = models.ForeignKey(Order, verbose_name='order', on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return self.item.name
 
 
 class Invoice(models.Model):
