@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 # Create your views here.
+from django.urls import reverse_lazy
 from django.views.generic import *
 
 from .models import *
@@ -17,8 +18,6 @@ def view(request):
 #     return render(request, 'product.html')
 #
 
-def cart(request):
-    return render(request, 'cart.html')
 
 
 def category(request):
@@ -48,7 +47,7 @@ class Index(TemplateView):
 
 class CategoryList(ListView):
     model = Category
-    template_name = 'appstore/categorylist.html'
+    template_name = 'categories.html'
     context_object_name = 'category'
     queryset = Category.objects.all()
 
@@ -81,6 +80,7 @@ class CartList(ListView):
 
 
 def cart_create(request, pk):
+
     obj = OrderItem()
     obj.item = Product.objects.get(pk=pk)
     obj.no_of_items = 1
@@ -119,3 +119,18 @@ def sign_up(request):
 
         form = UserCreationForm()
         return render(request, 'registration/signup.html', {'form': form})
+
+
+def delete_item(request, pk):
+    obj = OrderItem.objects.get(id=pk)
+    obj.delete()
+    return redirect('online:cart')
+
+
+def clear_cart(request):
+    obj_list = OrderItem.objects.filter(order__isnull=True)
+    for i in obj_list:
+        i.delete()
+    return redirect('online:cart')
+
+class

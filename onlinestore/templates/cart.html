@@ -52,7 +52,7 @@
 				<div class="col">
 
 					<!-- Cart Item -->
-					{% for item in cart %}
+					{% for i in cart %}
 
 					<div class="cart_item d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-start">
 						<!-- Name -->
@@ -61,12 +61,12 @@
 								<div><img src="{{ i.item.image.url }}" alt=""></div>
 							</div>
 							<div class="cart_item_name_container">
-								<div class="cart_item_name"><a href="#">hello</a></div>
-								<div class="cart_item_edit"><a href="#">Delete item</a></div>
+								<div class="cart_item_name"><a href="#">{{ i.item.name }}</a></div>
+								<div class="cart_item_edit"><a href="{% url 'online:deleteitem' i.pk %}">Delete item</a></div>
 							</div>
 						</div>
 						<!-- Price -->
-						<div class="cart_item_price">hai</div>
+						<div class="cart_item_price">{{ i.item.price }}</div>
 						<!-- Quantity -->
 						<div class="cart_item_quantity">
 							<div class="product_quantity_container">
@@ -93,8 +93,8 @@
 					<div class="cart_buttons d-flex flex-lg-row flex-column align-items-start justify-content-start">
 						<div class="button continue_shopping_button"><a href="#">Continue shopping</a></div>
 						<div class="cart_buttons_right ml-lg-auto">
-							<div class="button clear_cart_button"><a href="#">Clear cart</a></div>
-							<div class="button update_cart_button"><a href="#">Update cart</a></div>
+							<div class="button clear_cart_button"><a href="{% url 'online:clearcart' %}">Clear cart</a></div>
+							<div class="button update_cart_button"><a href="{% url 'online:cart' %}">Update cart</a></div>
 						</div>
 					</div>
 				</div>
