@@ -42,7 +42,6 @@ $(document).ready(function()
 	initSearch();
 	initMenu();
 	initQuantity();
-
 	/* 
 
 	2. Set Header
@@ -196,6 +195,8 @@ $(document).ready(function()
 				originalVal = input.val();
 				endVal = parseFloat(originalVal) + 1;
 				input.val(endVal);
+//				var price = Number($('.cart_item_price').text());
+//				$('.cart_item_total').text(endVal * price);
 			});
 
 			decButton.on('click', function()
@@ -205,9 +206,33 @@ $(document).ready(function()
 				{
 					endVal = parseFloat(originalVal) - 1;
 					input.val(endVal);
+//					var price = Number($('.cart_item_price').text());
+//				    $('.cart_item_total').text(endVal * price);
 				}
 			});
 		}
 	}
 
 });
+$('#quantity_input').change(function(){
+    var price = parseInt($('.cart_item_price').text());
+
+    var total = $(this).val() * price;
+    $('.cart_item_total').text(total);
+})
+
+    function getItemNumber(){
+        $.ajax({
+            url:'/ajax/get_number/',
+            data:{},
+            dataType:'json',
+            success: function(data){
+                for (var i = 0; i < cars.length; i++) {
+
+                    }
+                }
+
+
+            })
+
+    }

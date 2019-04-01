@@ -85,10 +85,10 @@
 												{% if user.is_authenticated %}
 												<li><a href="product.html">Account</a></li>
 												<li><a href="cart.html">Orders</a></li>
-												<li><a href="{% url 'logout' %}?next={{request.path}}">Logout</a></li>
+												<li><a href="{% url 'logout' %}">Logout</a></li>
 												{% else %}
-													<li><a href="{% url 'login' %}?next={{request.path}}">Login</a> </li>
-													<li><a href="{% url 'online:signup' %}?next={{request.path}}">Signup</a> </li>
+													<li><a href="{% url 'login' %}">Login</a> </li>
+													<li><a href="{% url 'online:signup' %}">Signup</a> </li>
 
 												{% endif %}
 

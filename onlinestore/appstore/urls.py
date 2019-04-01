@@ -14,4 +14,5 @@ urlpatterns = [
     path('cartcreate/<int:pk>/', cart_create, name='cartitemcreate'),
     path('deleteorderitem/<int:pk>/', delete_item, name='deleteitem'),
     path('deletecart/', clear_cart, name='clearcart'),
+    path('ajax/get_number/', get_no_items, name='get_number'),
 ]

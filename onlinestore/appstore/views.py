@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 
 # Create your views here.
@@ -17,7 +17,6 @@ def view(request):
 # def product(request):
 #     return render(request, 'product.html')
 #
-
 
 
 def category(request):
@@ -80,7 +79,6 @@ class CartList(ListView):
 
 
 def cart_create(request, pk):
-
     obj = OrderItem()
     obj.item = Product.objects.get(pk=pk)
     obj.no_of_items = 1
@@ -133,4 +131,12 @@ def clear_cart(request):
         i.delete()
     return redirect('online:cart')
 
-class
+
+def get_no_items(request):
+
+    data = {
+        'number': OrderItem.objects.count()
+    }
+    return JsonResponse(data)
+
+
