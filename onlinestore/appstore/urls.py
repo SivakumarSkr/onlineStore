@@ -16,4 +16,5 @@ urlpatterns = [
     path('deletecart/', clear_cart, name='clearcart'),
     path('ajax/get_number/', get_no_items, name='get_number'),
     path('ajax/updatecart/', update_cart, name='updatecart'),
+    path('categories/', CategoryList.as_view(), name='categorylist'),
 ]
