@@ -66,22 +66,22 @@
 							</div>
 						</div>
 						<!-- Price -->
-						<div class="cart_item_price cart_item_price{{ forloop.counter }}">{{ i.item.price }}</div>
+						<div class="cart_item_price cart_item_price{{forloop.counter}}" data-pk='{{i.pk }}'>{{ i.item.price }}</div>
 						<!-- Quantity -->
 						<div class="cart_item_quantity">
 							<div class="product_quantity_container">
 								<div class="product_quantity clearfix">
 									<span>Qty</span>
-									<input id="quantity_input{{ forloop.counter }}" type="text" pattern="[0-9]*" value="{{ i.no_of_items}}">
-									<div class="quantity_buttons">
-										<div id="quantity_inc_button quantity_inc_button{{ forloop.counter }}" class="quantity_inc quantity_control"><i class="fa fa-chevron-up" aria-hidden="true"></i></div>
-										<div id="quantity_dec_button quantity_dec_button{{ forloop.counter }}" class="quantity_dec quantity_control"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>
-									</div>
+									<input class="quantity_change" id="quantity_input{{forloop.counter}}" type="text" pattern="[0-9]*" value="{{ i.no_of_items}}">
+									<!--<div class="quantity_buttons">-->
+										<!--<div id="quantity_inc_button" class="quantity_inc quantity_control"><i class="fa fa-chevron-up" aria-hidden="true"></i></div>-->
+										<!--<div id="quantity_dec_button" class="quantity_dec quantity_control"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>-->
+									<!--</div>-->
 								</div>
 							</div>
 						</div>
 						<!-- Total -->
-						<div class="cart_item_total cart_item_total{{ forloop.counter }}">$790.90</div>
+						<div class="cart_item_total cart_item_total{{forloop.counter}}">{{i.total}}</div>
 					</div>
 					{% endfor %}
 
@@ -94,7 +94,7 @@
 						<div class="button continue_shopping_button"><a href="#">Continue shopping</a></div>
 						<div class="cart_buttons_right ml-lg-auto">
 							<div class="button clear_cart_button"><a href="{% url 'online:clearcart' %}">Clear cart</a></div>
-							<div class="button update_cart_button"><a href="{% url 'online:cart' %}">Update cart</a></div>
+							<div class="button update_cart_button"><a>Update cart</a></div>
 						</div>
 					</div>
 				</div>
@@ -146,7 +146,7 @@
 							<ul>
 								<li class="d-flex flex-row align-items-center justify-content-start">
 									<div class="cart_total_title">Subtotal</div>
-									<div class="cart_total_value ml-auto">$790.90</div>
+									<div class="cart_total_value ml-auto" id="subtotal">0</div>
 								</li>
 								<li class="d-flex flex-row align-items-center justify-content-start">
 									<div class="cart_total_title">Shipping</div>
@@ -154,7 +154,7 @@
 								</li>
 								<li class="d-flex flex-row align-items-center justify-content-start">
 									<div class="cart_total_title">Total</div>
-									<div class="cart_total_value ml-auto">$790.90</div>
+									<div class="cart_total_value ml-auto" id="total">0</div>
 								</li>
 							</ul>
 						</div>

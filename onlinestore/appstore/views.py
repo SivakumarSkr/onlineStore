@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 # Create your views here.
 from django.urls import reverse_lazy
@@ -81,7 +81,8 @@ class CartList(ListView):
 def cart_create(request, pk):
     obj = OrderItem()
     obj.item = Product.objects.get(pk=pk)
-    obj.no_of_items = 1
+    obj.no_of_items = 0
+    obj.total = 0
     obj.save()
     return redirect('online:cart')
 
@@ -133,10 +134,20 @@ def clear_cart(request):
 
 
 def get_no_items(request):
-
     data = {
         'number': OrderItem.objects.count()
     }
     return JsonResponse(data)
 
+
+def update_cart(request):
+    pk = request.GET.get('primaryKey')
+    quantity = request.GET.get('quantity')
+    item = get_object_or_404(OrderItem, pk=pk)
+    item.no_of_items = quantity
+    item.save()
+    data = {
+        'status': 'ok',
+    }
+    return JsonResponse(data)
 

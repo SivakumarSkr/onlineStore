@@ -96,6 +96,7 @@ class OrderItem(models.Model):
     item = models.ForeignKey(Product, verbose_name='Product', on_delete=models.CASCADE)
     no_of_items = models.PositiveIntegerField()
     order = models.ForeignKey(Order, verbose_name='order', on_delete=models.CASCADE, null=True)
+    total = models.PositiveIntegerField()
 
     def __str__(self):
         return self.item.name
