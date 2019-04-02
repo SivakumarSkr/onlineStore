@@ -228,7 +228,7 @@ $('.quantity_change').change(function(){
                     var quantity = $('#quantity_input'+i).val()
                     var total = quantity * price;
                     var primaryKey = key.attr('data-pk');
-                    updateItem(primaryKey, quantity);
+                    updateItem(primaryKey, quantity, total);
                     $('.cart_item_total'+i).text(total);
                     totalSum = totalSum + total
                 }
@@ -237,12 +237,13 @@ $('.quantity_change').change(function(){
                 }
             })
 })
-    function updateItem(x, y){
+    function updateItem(x, y, z){
         $.ajax({
             url:'/ajax/updatecart/',
             data:{
                 'primaryKey':x,
                 'quantity':y,
+                'total': z,
             },
             dataType:'json',
 

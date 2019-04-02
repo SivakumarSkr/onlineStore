@@ -42,18 +42,19 @@
 						<div class="section_title">Get in Touch</div>
 						<div class="section_subtitle">Say hello</div>
 						<div class="contact_form_container">
-							<form action="#" id="contact_form" class="contact_form">
+							<form action="#" id="contact_form" class="contact_form" method="post">
+								{% csrf_token %}
 								<div class="row">
-									<div class="col-xl-6">
+									<div class="col-xl-12">
 										<!-- Name -->
-										<label for="contact_name">First Name*</label>
+										<label for="contact_name">Name *</label>
 										<input type="text" id="contact_name" class="contact_input" required="required">
 									</div>
-									<div class="col-xl-6 last_name_col">
-										<!-- Last Name -->
-										<label for="contact_last_name">Last Name*</label>
-										<input type="text" id="contact_last_name" class="contact_input" required="required">
-									</div>
+<!--									<div class="col-xl-6 last_name_col">-->
+<!--										&lt;!&ndash; Last Name &ndash;&gt;-->
+<!--										<label for="contact_last_name">Last Name*</label>-->
+<!--										<input type="text" id="contact_last_name" class="contact_input" required="required">-->
+<!--									</div>-->
 								</div>
 								<div>
 									<!-- Subject -->
@@ -64,7 +65,7 @@
 									<label for="contact_textarea">Message*</label>
 									<textarea id="contact_textarea" class="contact_input contact_textarea" required="required"></textarea>
 								</div>
-								<button class="button contact_button"><span>Send Message</span></button>
+								<button type='submit' class="button contact_button"><span>Send Message</span></button>
 							</form>
 						</div>
 					</div>

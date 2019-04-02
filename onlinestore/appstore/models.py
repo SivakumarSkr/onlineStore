@@ -35,7 +35,7 @@ class Customer(models.Model):
 
 class Category(models.Model):
     name = models.CharField('Name', max_length=20)
-    image = ResizedImageField(size=[500, 500], upload_to='{}/'.format('Category'), default='category/default.jpg')
+    image = ResizedImageField(upload_to='{}/'.format('Category'), default='category/default.jpg')
     descrip = models.TextField(max_length=1000, null=True)
 
     def __str__(self):
@@ -111,3 +111,11 @@ class Invoice(models.Model):
 class Payment(models.Model):
     payment_date = models.DateTimeField(default=datetime.datetime.now)
     payment_amount = models.PositiveIntegerField()
+
+
+class Messages(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='User')
+    subject = models.CharField('Subject', max_length=200)
+    message = models.TextField('Message', max_length=1000)
+
+

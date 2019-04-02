@@ -48,18 +48,21 @@ class CategoryList(ListView):
     model = Category
     template_name = 'categories.html'
     context_object_name = 'category'
-    queryset = Category.objects.all()
+
+    def get_queryset(self):
+
+        return Category.objects.all()
 
 
 class CategoryDetail(DetailView):
     model = Category
-    template_name = 'categories.html'
+    template_name = 'subcategories.html'
     context_object_name = 'category'
 
 
 class SubCategoryDetail(DetailView):
     model = SubCategory
-    template_name = 'categories.html'
+    template_name = 'subcategories.html'
     context_object_name = 'subcategory'
 
 
@@ -143,8 +146,11 @@ def get_no_items(request):
 def update_cart(request):
     pk = request.GET.get('primaryKey')
     quantity = request.GET.get('quantity')
+    total = request.GET.get('total')
     item = get_object_or_404(OrderItem, pk=pk)
     item.no_of_items = quantity
+    item.total = total
+
     item.save()
     data = {
         'status': 'ok',
