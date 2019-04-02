@@ -8,8 +8,6 @@ urlpatterns = [
     path('cart/', CartList.as_view(), name='cart'),
     path('category/<int:pk>/', CategoryDetail.as_view(), name='category'),
     path('checkout/', checkout, name='checkout'),
-    path('contact/', contact, name='contact'),
-    path('subcategories/', subcategory, name='subcategory'),
     path('sign_up/', sign_up, name='signup'),
     path('cartcreate/<int:pk>/', cart_create, name='cartitemcreate'),
     path('deleteorderitem/<int:pk>/', delete_item, name='deleteitem'),
@@ -17,4 +15,5 @@ urlpatterns = [
     path('ajax/get_number/', get_no_items, name='get_number'),
     path('ajax/updatecart/', update_cart, name='updatecart'),
     path('categories/', CategoryList.as_view(), name='categorylist'),
+    path('message_create/', MessageCreate.as_view(), name='message_create'),
 ]

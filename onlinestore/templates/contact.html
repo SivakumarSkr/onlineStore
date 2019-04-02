@@ -1,10 +1,11 @@
 {% extends 'base_generic.html' %}
 {% load static %}
+
 {% block header %}
 <link rel="stylesheet" type="text/css" href="{% static 'styles/contact.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'styles/contact_responsive.css' %}">
 {% endblock %}
-
+{% load crispy_forms_tags %}
 {% block content %}
 	<!-- Home -->
 
@@ -42,30 +43,10 @@
 						<div class="section_title">Get in Touch</div>
 						<div class="section_subtitle">Say hello</div>
 						<div class="contact_form_container">
-							<form action="#" id="contact_form" class="contact_form" method="post">
+							<form action="{% url 'online:message_create' %}" id="contact_form" class="contact_form" method="post">
 								{% csrf_token %}
-								<div class="row">
-									<div class="col-xl-12">
-										<!-- Name -->
-										<label for="contact_name">Name *</label>
-										<input type="text" id="contact_name" class="contact_input" required="required">
-									</div>
-<!--									<div class="col-xl-6 last_name_col">-->
-<!--										&lt;!&ndash; Last Name &ndash;&gt;-->
-<!--										<label for="contact_last_name">Last Name*</label>-->
-<!--										<input type="text" id="contact_last_name" class="contact_input" required="required">-->
-<!--									</div>-->
-								</div>
-								<div>
-									<!-- Subject -->
-									<label for="contact_company">Subject</label>
-									<input type="text" id="contact_company" class="contact_input">
-								</div>
-								<div>
-									<label for="contact_textarea">Message*</label>
-									<textarea id="contact_textarea" class="contact_input contact_textarea" required="required"></textarea>
-								</div>
-								<button type='submit' class="button contact_button"><span>Send Message</span></button>
+								{{ form|crispy }}
+								<button type='submit' class="button contact_button" name="button"><span>Send Message</span></button>
 							</form>
 						</div>
 					</div>
