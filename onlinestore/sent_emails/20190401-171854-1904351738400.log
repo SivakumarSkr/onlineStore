@@ -1,0 +1,22 @@
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: Password reset on 127.0.0.1:8000
+From: webmaster@localhost
+To: sivakumar28skr@gmail.com
+Date: Mon, 01 Apr 2019 11:48:54 -0000
+Message-ID: <155411933440.3484.4415062546135134405@DESKTOP-P7AK1LC>
+
+
+To initiate the password reset process for your siva TestSite Account,
+click the link below:
+
+http://127.0.0.1:8000/accounts/reset/Mg/554-fe76f9b1148ba31a55da/
+
+If clicking the link above doesn't work, please copy and paste the URL in a new browser
+window instead.
+
+Sincerely,
+The TestSite Team
+
+-------------------------------------------------------------------------------
