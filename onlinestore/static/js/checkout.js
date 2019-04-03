@@ -204,10 +204,14 @@ $(document).ready(function()
 				if(originalVal > 0)
 				{
 					endVal = parseFloat(originalVal) - 1;
-					input.val(endVal);
+	 				input.val(endVal);
 				}
 			});
 		}
 	}
+	$("#submit_button").click(function(){
+	    console.log('hello');
+	    $("#checkout_form").submit();
+	})
 
 });
