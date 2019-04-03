@@ -14,12 +14,13 @@ class Address(models.Model):
     def pincode_validators(x):
         if len(str(x)) != 6:
             raise ValidationError('Invalid Pincode')
-
-    house_or_flat = models.CharField('House name /Flat no', max_length=50)
-    post = models.CharField('Post office', max_length=50)
+    name = models.CharField('Name', max_length=30, null=True)
+    email = models.EmailField('Email', null=True)
+    phone = PhoneNumberField(null=True)
+    address = models.TextField('Address', max_length=500, null=True)
     city = models.CharField('City', max_length=50)
     district = models.CharField('District', max_length=20)
-    pincode = models.PositiveIntegerField('Pincode', validators=[pincode_validators])
+    pin_code = models.PositiveIntegerField('Pincode', validators=[pincode_validators])
 
 
 class Customer(models.Model):
@@ -114,7 +115,7 @@ class Payment(models.Model):
 
 
 class Message(models.Model):
-    #user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='User')
+    # user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='User')
     name = models.CharField('Name', max_length=50)
     subject = models.CharField('Subject', max_length=200)
     message = models.TextField('Message', max_length=1000)
