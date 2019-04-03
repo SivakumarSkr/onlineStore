@@ -91,6 +91,7 @@ class Order(models.Model):
     date = models.DateTimeField('Date of order', default=datetime.datetime.now)
     customer = models.ForeignKey(Customer, verbose_name='Customer', on_delete=models.CASCADE)
     address = models.OneToOneField(Address, on_delete=models.PROTECT)
+    # amount = models.PositiveIntegerField('Amount')
 
 
 class OrderItem(models.Model):

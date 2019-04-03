@@ -148,4 +148,4 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
+print(os.environ.get('APIKey'))

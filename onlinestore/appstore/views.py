@@ -6,6 +6,11 @@ from .forms import MessageForm, AddressForm
 # Create your views here.
 from django.urls import reverse_lazy
 from django.views.generic import *
+from instamojo_wrapper import Instamojo
+
+from django.http import HttpResponseRedirect
+
+import os
 
 from .models import *
 
@@ -69,7 +74,7 @@ def cart_create(request, pk):
     return redirect('online:cart')
 
 
-class Order(ListView):
+class OrderList(ListView):
     model = Order
     template_name = ''
     context_object_name = 'order'
@@ -148,5 +153,30 @@ class AddressCreate(CreateView):
     model = Address
     form_class = AddressForm
     template_name = 'checkout.html'
-    success_url = reverse_lazy('online:home')
 
+    def get_success_url(self):
+        return reverse_lazy('online:order_create', args=(self.object.pk,))
+
+
+def order_create(request, pk):
+    item_list = OrderItem.objects.all()
+    order_obj = Order()
+    order_obj.customer = request.user.customer
+    order_obj.address = Address.objects.get(pk=pk)
+    sum_of_item = 0
+    order_obj.save()
+    for item in item_list:
+        sum_of_item += item.total
+        item.order = order_obj
+        item.save()
+    order_obj.amount = sum_of_item
+    order_obj.save()
+    # response = api.payment_request_create(
+    #     amount=sum_of_item,
+    #     purpose='order',
+    #     send_email=True,
+    #     email='siva999skr@gmail.com',
+    #     redirect_url=redirect('online:home')
+    # )
+
+    return redirect('online:home')
