@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-
+from .forms import MessageForm
 # Create your views here.
 from django.urls import reverse_lazy
 from django.views.generic import *
@@ -18,21 +18,8 @@ def view(request):
 #     return render(request, 'product.html')
 #
 
-
-def category(request):
-    return render(request, 'categories.html')
-
-
 def checkout(request):
     return render(request, 'checkout.html')
-
-
-def contact(request):
-    return render(request, 'contact.html')
-
-
-def subcategory(request):
-    return render(request, 'subcategories.html')
 
 
 class Index(TemplateView):
@@ -156,4 +143,13 @@ def update_cart(request):
         'status': 'ok',
     }
     return JsonResponse(data)
+
+
+class MessageCreate(CreateView):
+    model = Message
+    form_class = MessageForm
+    template_name = 'contact.html'
+    success_url = reverse_lazy('online:home')
+
+
 

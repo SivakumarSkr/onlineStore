@@ -113,9 +113,13 @@ class Payment(models.Model):
     payment_amount = models.PositiveIntegerField()
 
 
-class Messages(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='User')
+class Message(models.Model):
+    #user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='User')
+    name = models.CharField('Name', max_length=50)
     subject = models.CharField('Subject', max_length=200)
     message = models.TextField('Message', max_length=1000)
+
+    def __str__(self):
+        return self.subject
 
 

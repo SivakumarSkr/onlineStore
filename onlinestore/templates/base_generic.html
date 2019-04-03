@@ -51,7 +51,7 @@
 									</li>
 
 									<li><a href="#">Accessories</a></li>
-									<li><a href="{% url 'online:contact' %}">Contact</a></li>
+									<li><a href="{% url 'online:message_create' %}">Contact</a></li>
 
 									<!-- <li><a href="#">Offers</a></li>         -->
 
@@ -72,7 +72,7 @@
 													c0,7.5,6,13.5,13.5,13.5s13.5-6,13.5-13.5v-41h45.2l26.9,302.3C412.8,445.2,392.1,462,366.8,462z"/>
 											</g>
 										</svg>
-										<div>Cart <span>(0)</span></div>
+										<div>Cart (<span class="cart_no"></span> )</div>
 									</a>
 								</div>
 								<div class="shopping_cart" style="margin-left:20px">
@@ -233,7 +233,19 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 		</div>
 	</footer>
 </div>
+
 <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+<script>
+	$.ajax({
+		url:'/ajax/get_number/',
+		data:{},
+		dataType:'json',
+		success: function(data){
+			$('.cart_no').text(data.number);
+		}
+
+	})
+</script>
 <script src="{% static 'styles/bootstrap4/popper.js' %}"></script>
 <script src="{% static 'styles/bootstrap4/bootstrap.min.js' %}"></script>
 <script src="{% static 'plugins/greensock/TweenMax.min.js' %}"></script>
