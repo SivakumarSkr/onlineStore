@@ -1,5 +1,7 @@
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import MessageForm, AddressForm
@@ -7,12 +9,15 @@ from .forms import MessageForm, AddressForm
 from django.urls import reverse_lazy
 from django.views.generic import *
 from instamojo_wrapper import Instamojo
-
+from django.conf import settings
 from django.http import HttpResponseRedirect
-
+from dal import autocomplete
 import os
 
 from .models import *
+
+api = Instamojo(api_key=settings.INSTAMOJO_API_KEY,
+                auth_token=settings.INSTAMOJO_API_TOKEN)
 
 
 def view(request):
@@ -34,7 +39,6 @@ class CategoryList(ListView):
     context_object_name = 'category'
 
     def get_queryset(self):
-
         return Category.objects.all()
 
 
@@ -56,7 +60,7 @@ class ProductDet(DetailView):
     context_object_name = 'prod'
 
 
-class CartList(ListView):
+class CartList(LoginRequiredMixin, ListView):
     model = OrderItem
     template_name = 'cart.html'
     context_object_name = 'cart'
@@ -65,6 +69,7 @@ class CartList(ListView):
         return OrderItem.objects.all()
 
 
+@login_required
 def cart_create(request, pk):
     obj = OrderItem()
     obj.item = Product.objects.get(pk=pk)
@@ -74,7 +79,7 @@ def cart_create(request, pk):
     return redirect('online:cart')
 
 
-class OrderList(ListView):
+class OrderList(LoginRequiredMixin, ListView):
     model = Order
     template_name = ''
     context_object_name = 'order'
@@ -83,7 +88,7 @@ class OrderList(ListView):
         pass
 
 
-class OrderDetail(DetailView):
+class OrderDetail(LoginRequiredMixin, DetailView):
     model = Order
     template_name = ''
     context_object_name = 'orderd'
@@ -107,12 +112,14 @@ def sign_up(request):
         return render(request, 'registration/signup.html', {'form': form})
 
 
+@login_required
 def delete_item(request, pk):
     obj = OrderItem.objects.get(id=pk)
     obj.delete()
     return redirect('online:cart')
 
 
+@login_required
 def clear_cart(request):
     obj_list = OrderItem.objects.filter(order__isnull=True)
     for i in obj_list:
@@ -142,14 +149,14 @@ def update_cart(request):
     return JsonResponse(data)
 
 
-class MessageCreate(CreateView):
+class MessageCreate(LoginRequiredMixin, CreateView):
     model = Message
     form_class = MessageForm
     template_name = 'contact.html'
     success_url = reverse_lazy('online:home')
 
 
-class AddressCreate(CreateView):
+class AddressCreate(LoginRequiredMixin, CreateView):
     model = Address
     form_class = AddressForm
     template_name = 'checkout.html'
@@ -158,6 +165,7 @@ class AddressCreate(CreateView):
         return reverse_lazy('online:order_create', args=(self.object.pk,))
 
 
+@login_required
 def order_create(request, pk):
     item_list = OrderItem.objects.all()
     order_obj = Order()
@@ -171,12 +179,20 @@ def order_create(request, pk):
         item.save()
     order_obj.amount = sum_of_item
     order_obj.save()
-    # response = api.payment_request_create(
-    #     amount=sum_of_item,
-    #     purpose='order',
-    #     send_email=True,
-    #     email='siva999skr@gmail.com',
-    #     redirect_url=redirect('online:home')
-    # )
+    response = api.payment_request_create(
+        amount=20,
+        purpose='order',
+        send_email=True,
+        email='siva999skr@gmail.com',
+        redirect_url='https://www.facebook.com'
+    )
+    return HttpResponseRedirect(str(response['payment_request']['longurl']))
 
-    return redirect('online:home')
+
+class ProductAutoComplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = Product.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+        return qs

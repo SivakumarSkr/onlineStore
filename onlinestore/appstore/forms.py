@@ -1,17 +1,15 @@
 from django import forms
 
-from .models import Message, Address
+from .models import Message, Address, Customer
 
 
 class MessageForm(forms.ModelForm):
-
     class Meta:
         model = Message
         fields = ['name', 'subject', 'message']
 
 
 class AddressForm(forms.ModelForm):
-
     class Meta:
         model = Address
         fields = '__all__'
@@ -23,4 +21,15 @@ class AddressForm(forms.ModelForm):
             "pin_code": "PinCode",
             "phone": "Contact No",
             "email": "Email",
+        }
+
+
+class CustomerForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = ['name', 'contact_no', 'profile_pic']
+        labels = {
+            'name': "Name",
+            'contact_no': "Contact number",
+            'profile_pic': "Profile Picture",
         }

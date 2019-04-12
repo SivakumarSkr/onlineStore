@@ -27,7 +27,7 @@ class Customer(models.Model):
     user_details = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField('Name', max_length=50)
     contact_no = PhoneNumberField()
-    address = models.OneToOneField(Address, on_delete=models.CASCADE)
+    # address = models.OneToOneField(Address, on_delete=models.CASCADE)
     profile_pic = models.ImageField('Profile Picture', upload_to='profile/', default='profile/default.jpg')
 
     def __str__(self):

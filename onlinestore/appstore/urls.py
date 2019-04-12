@@ -17,4 +17,5 @@ urlpatterns = [
     path('categories/', CategoryList.as_view(), name='categorylist'),
     path('message_create/', MessageCreate.as_view(), name='message_create'),
     path('order_create/<int:pk>/', order_create, name='order_create'),
+    path('autocompleteview/', ProductAutoComplete.as_view(), name='productautocomplet'),
 ]
