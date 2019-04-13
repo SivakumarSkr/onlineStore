@@ -1,6 +1,8 @@
+from dal import autocomplete
 from django import forms
+from django.urls import reverse
 
-from .models import Message, Address, Customer
+from .models import Message, Address, Customer, Product
 
 
 class MessageForm(forms.ModelForm):
@@ -33,3 +35,11 @@ class CustomerForm(forms.ModelForm):
             'contact_no': "Contact number",
             'profile_pic': "Profile Picture",
         }
+
+
+class Example(forms.Form):
+    product = forms.ModelChoiceField(
+        queryset=Product.objects.all(),
+        widget=autocomplete.ModelSelect2(url='http://127.0.0.1/search/')
+    )
+

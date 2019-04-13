@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import MessageForm, AddressForm
+from .forms import MessageForm, AddressForm, Example, CustomerForm
 # Create your views here.
 from django.urls import reverse_lazy
 from django.views.generic import *
@@ -66,7 +66,7 @@ class CartList(LoginRequiredMixin, ListView):
     context_object_name = 'cart'
 
     def get_queryset(self):
-        return OrderItem.objects.all()
+        return OrderItem.objects.filter(customer=self.request.user.customer)
 
 
 @login_required
@@ -75,6 +75,7 @@ def cart_create(request, pk):
     obj.item = Product.objects.get(pk=pk)
     obj.no_of_items = 0
     obj.total = 0
+    obj.customer = request.user.customer
     obj.save()
     return redirect('online:cart')
 
@@ -94,22 +95,11 @@ class OrderDetail(LoginRequiredMixin, DetailView):
     context_object_name = 'orderd'
 
 
-def sign_up(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            u = form.cleaned_data.get('username')
-            p = form.cleaned_data.get('password1')
-            user = authenticate(username=u, password=p)
-            login(request, user)
-            return redirect('online:home')
-        else:
-            return render(request, 'registration/signup.html', {'form': form})
-    else:
-
-        form = UserCreationForm()
-        return render(request, 'registration/signup.html', {'form': form})
+class SignUp(CreateView):
+    model = User
+    form_class = UserCreationForm
+    template_name = 'registration/signup.html'
+    success_url = reverse_lazy('online:customercreate')
 
 
 @login_required
@@ -121,7 +111,7 @@ def delete_item(request, pk):
 
 @login_required
 def clear_cart(request):
-    obj_list = OrderItem.objects.filter(order__isnull=True)
+    obj_list = OrderItem.objects.filter(order__isnull=True).filter(customer=request.user.customer)
     for i in obj_list:
         i.delete()
     return redirect('online:cart')
@@ -129,7 +119,7 @@ def clear_cart(request):
 
 def get_no_items(request):
     data = {
-        'number': OrderItem.objects.count()
+        'number': OrderItem.objects.filter(customer=request.user.customer).count()
     }
     return JsonResponse(data)
 
@@ -154,6 +144,13 @@ class MessageCreate(LoginRequiredMixin, CreateView):
     form_class = MessageForm
     template_name = 'contact.html'
     success_url = reverse_lazy('online:home')
+
+    def form_valid(self, form):
+        model = form.save(commit=False)
+        customer = self.request.user.customer
+        model.customer = customer
+        model.save()
+        return super(MessageCreate, self).form_valid(form)
 
 
 class AddressCreate(LoginRequiredMixin, CreateView):
@@ -196,3 +193,22 @@ class ProductAutoComplete(autocomplete.Select2QuerySetView):
         if self.q:
             qs = qs.filter(name__istartswith=self.q)
         return qs
+
+
+class ProductSearch(FormView):
+    template_name = 'example.html'
+    success_url = reverse_lazy('online:home')
+    form_class = Example
+
+
+class CustomerCreation(CreateView):
+    model = Customer
+    template_name = 'registration/customer.html'
+    form_class = CustomerForm
+    success_url = reverse_lazy('online:home')
+
+    def form_valid(self, form):
+        model = form.save(commit=False)
+        model.user_details = self.request.user
+        model.save()
+        return super(CustomerCreation, self).form_valid(form)

@@ -8,7 +8,7 @@ urlpatterns = [
     path('cart/', CartList.as_view(), name='cart'),
     path('category/<int:pk>/', CategoryDetail.as_view(), name='category'),
     path('checkout/', AddressCreate.as_view(), name='checkout'),
-    path('sign_up/', sign_up, name='signup'),
+    path('sign_up/', SignUp.as_view(), name='signup'),
     path('cartcreate/<int:pk>/', cart_create, name='cartitemcreate'),
     path('deleteorderitem/<int:pk>/', delete_item, name='deleteitem'),
     path('deletecart/', clear_cart, name='clearcart'),
@@ -17,5 +17,7 @@ urlpatterns = [
     path('categories/', CategoryList.as_view(), name='categorylist'),
     path('message_create/', MessageCreate.as_view(), name='message_create'),
     path('order_create/<int:pk>/', order_create, name='order_create'),
-    path('autocompleteview/', ProductAutoComplete.as_view(), name='productautocomplet'),
+    path('autocompleteview/', ProductAutoComplete.as_view(), name='productautocomplete'),
+    path('search/', ProductSearch.as_view(), name='search'),
+    path('customercreate/', CustomerCreation.as_view(), name='customercreate'),
 ]
