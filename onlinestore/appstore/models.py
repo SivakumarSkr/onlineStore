@@ -87,16 +87,17 @@ class Description(models.Model):
 
 
 class Order(models.Model):
-    order_id = models.UUIDField('Order ID', default=uuid.uuid1)
+    code = models.UUIDField('Order ID', default=uuid.uuid1)
     date = models.DateTimeField('Date of order', default=datetime.datetime.now)
     customer = models.ForeignKey(Customer, verbose_name='Customer', on_delete=models.CASCADE)
     address = models.OneToOneField(Address, on_delete=models.PROTECT)
-    # amount = models.PositiveIntegerField('Amount')
+    amount = models.PositiveIntegerField('Amount', default=0)
+    payment_success = models.BooleanField(default=False)
 
 
 class OrderItem(models.Model):
     item = models.ForeignKey(Product, verbose_name='Product', on_delete=models.CASCADE)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, verbose_name='Customer', null=True)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, verbose_name='Customer')
     no_of_items = models.PositiveIntegerField()
     order = models.ForeignKey(Order, verbose_name='order', on_delete=models.CASCADE, null=True)
     total = models.PositiveIntegerField()
@@ -105,15 +106,12 @@ class OrderItem(models.Model):
         return self.item.name
 
 
-class Invoice(models.Model):
-    invoice_id = models.UUIDField('invoice id', default=uuid.uuid4)
-    order_id = models.OneToOneField(Order, verbose_name='Order', on_delete=models.CASCADE)
-    invoice_date = models.DateTimeField(default=datetime.datetime.now)
-
-
 class Payment(models.Model):
+    order = models.OneToOneField(Order, on_delete=models.CASCADE)
     payment_date = models.DateTimeField(default=datetime.datetime.now)
-    payment_amount = models.PositiveIntegerField()
+    payment_request_id = models.CharField(max_length=25)
+    payment_id = models.CharField(max_length=25, null=True)
+    payment_status = models.CharField(max_length=20)
 
 
 class Message(models.Model):
@@ -124,5 +122,4 @@ class Message(models.Model):
 
     def __str__(self):
         return self.subject
-
 

@@ -74,7 +74,7 @@
 										</svg>
 										<div>Cart (
 											{% if user.is_authenticated %}<span class="cart_no"></span>
-											{% endif %})</div>
+											{% endif %} )</div>
 									</a>
 								</div>
 								<div class="shopping_cart" style="margin-left:20px">
@@ -85,8 +85,8 @@
 											</div>
 											<ul>
 												{% if user.is_authenticated %}
-												<li><a href="product.html">Account</a></li>
-												<li><a href="cart.html">Orders</a></li>
+												<li><a href="{% url 'online:profile' request.user.pk %}">Account</a></li>
+												<li><a href="{% url 'online:orderlist' %}">Orders</a></li>
 												<li><a href="{% url 'logout' %}?next={{request.path}}">Logout</a></li>
 												{% else %}
 													<li><a href="{% url 'login' %}?next={{request.path}}">Login</a> </li>

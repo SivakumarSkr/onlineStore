@@ -1,0 +1,20 @@
+{% extends 'base_generic.html' %}
+{% load static %}
+{% block header %}
+<link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/owl.carousel.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/owl.theme.default.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/animate.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'styles/main_styles.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'styles/responsive.css' %}">
+{% endblock %}
+{% block content %}
+<div class="home" style="margin-top:200px">
+
+    <a href="{% url 'online:payment-create' order.pk %}">Payment</a>
+</div>
+
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'plugins/easing/easing.js' %}"></script>
+    <script src="{% static 'plugins/parallax-js-master/parallax.min.js' %}"></script>
+{% endblock %}

@@ -66,8 +66,7 @@ class CartList(LoginRequiredMixin, ListView):
     context_object_name = 'cart'
 
     def get_queryset(self):
-        return OrderItem.objects.filter(customer=self.request.user.customer)
-
+        return OrderItem.objects.filter(customer=self.request.user.customer).filter(order=None)
 
 @login_required
 def cart_create(request, pk):
@@ -78,15 +77,6 @@ def cart_create(request, pk):
     obj.customer = request.user.customer
     obj.save()
     return redirect('online:cart')
-
-
-class OrderList(LoginRequiredMixin, ListView):
-    model = Order
-    template_name = ''
-    context_object_name = 'order'
-
-    def get_queryset(self):
-        pass
 
 
 class OrderDetail(LoginRequiredMixin, DetailView):
@@ -100,6 +90,32 @@ class SignUp(CreateView):
     form_class = UserCreationForm
     template_name = 'registration/signup.html'
     success_url = reverse_lazy('online:customercreate')
+
+    def form_valid(self, form):
+        form.save()
+        username = self.request.POST['username']
+        password = self.request.POST['password1']
+        print(username, password)
+        user = authenticate(username=username, password=password)
+        login(self.request, user)
+        return super(SignUp, self).form_valid(form)
+
+
+def sign_up(request):
+    if request.method == "POST":
+        sign = UserCreationForm(request.POST)
+        if sign.is_valid():
+            sign.save()
+            u = sign.cleaned_data.get('username')
+            p = sign.cleaned_data.get('password1')
+            user = authenticate(username=u, password=p)
+            login(request, user)
+            return redirect('online:customercreate')
+        else:
+            return render(request, 'registration/signup.html', {'form': sign})
+    else:
+        sign = UserCreationForm()
+        return render(request, 'registration/signup.html', {'form': sign})
 
 
 @login_required
@@ -119,7 +135,7 @@ def clear_cart(request):
 
 def get_no_items(request):
     data = {
-        'number': OrderItem.objects.filter(customer=request.user.customer).count()
+        'number': OrderItem.objects.filter(customer=request.user.customer).filter(order=None).count()
     }
     return JsonResponse(data)
 
@@ -164,8 +180,9 @@ class AddressCreate(LoginRequiredMixin, CreateView):
 
 @login_required
 def order_create(request, pk):
-    item_list = OrderItem.objects.all()
+    item_list = OrderItem.objects.filter(customer=request.user.customer).filter(order=None)
     order_obj = Order()
+    orderpk= order_obj.pk
     order_obj.customer = request.user.customer
     order_obj.address = Address.objects.get(pk=pk)
     sum_of_item = 0
@@ -176,13 +193,22 @@ def order_create(request, pk):
         item.save()
     order_obj.amount = sum_of_item
     order_obj.save()
+    return reverse('online:ordersummary', orderpk)
+
+
+def payment_request(request, pk):
     response = api.payment_request_create(
         amount=20,
-        purpose='order',
+        purpose='Order id-{0}'.format(pk),
         send_email=True,
         email='siva999skr@gmail.com',
-        redirect_url='https://www.facebook.com'
+        redirect_url=redirect('online:paymentredirect', pk=pk)
     )
+    payment_request_id = response['payment_request']['id']
+    payment_status = response['payment_request']['status']
+    payment = Payment(payment_request_id=payment_request_id, payment_status=payment_status)
+    payment.order = Order.objects.get(id=pk)
+    payment.save()
     return HttpResponseRedirect(str(response['payment_request']['longurl']))
 
 
@@ -212,3 +238,38 @@ class CustomerCreation(CreateView):
         model.user_details = self.request.user
         model.save()
         return super(CustomerCreation, self).form_valid(form)
+
+
+class Profile(DetailView):
+    model = User
+    template_name = 'profile.html'
+    context_object_name = 'customer'
+
+
+class OrderSummary(DetailView):
+    model = Order
+    template_name = 'ordersummary.html'
+    context_object_name = 'order'
+
+
+class OrderList(ListView):
+    model = Order
+    template_name = 'orderlist.html'
+    context_object_name = 'order'
+
+    def get_queryset(self):
+        return Order.objects.filter(customer=self.request.user.customer)
+
+
+class PaymentRedirect(RedirectView):
+
+    def get(self, request, *args, **kwargs):
+        payment_id = self.request.GET['payment_id']
+        payment_status = self.request.GET['payment_status']
+        payment_request_id = self.request.GET['payment_request_id']
+        order = Order.Objects.get(id=kwargs['pk'])
+        order.payment.payment_id = payment_id
+        order.payment.payment_status = payment_status
+        order.payment_success = True
+        order.payment.save()
+        order.save()
