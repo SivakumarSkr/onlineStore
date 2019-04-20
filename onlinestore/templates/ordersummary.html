@@ -9,7 +9,7 @@
 {% endblock %}
 {% block content %}
 <div class="home" style="margin-top:200px">
-
+    <h1>{{ order.amount }}</h1>
     <a href="{% url 'online:payment-create' order.pk %}">Payment</a>
 </div>
 

@@ -3,19 +3,9 @@
 {% block header %}
 <link rel="stylesheet" type="text/css" href="{% static 'styles/main_styles.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'styles/responsive.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'styles/cart.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'styles/cart_responsive.css' %}">
 {% endblock %}
 {% block content %}
-<div class="home">
 
-    {% for ord in order %}
-    <div class="jumbotron">
-    <a href="{% url 'online:ordersummary' ord.pk %}">{{ ord.code }}</a>
-        </div>
-    {% endfor %}
-
-</div>
 {% endblock %}
 {% block scripts %}
 <script src="{% static 'plugins/easing/easing.js' %}"></script>

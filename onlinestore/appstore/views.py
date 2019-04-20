@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
+from .forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -67,6 +67,7 @@ class CartList(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return OrderItem.objects.filter(customer=self.request.user.customer).filter(order=None)
+
 
 @login_required
 def cart_create(request, pk):
@@ -140,6 +141,32 @@ def get_no_items(request):
     return JsonResponse(data)
 
 
+def get_total(request):
+    total = 0
+    for i in OrderItem.objects.filter(customer=request.user.customer).filter(order=None):
+        total += i.total
+    data = {
+        'total': total,
+    }
+    print(total)
+    return JsonResponse(data)
+
+
+def check_cart(request):
+    pk = request.GET.get('pk')
+    print(pk)
+    obj = get_object_or_404(Product, pk=int(pk)).orderitem_set.all().filter(customer=request.user.customer).filter(
+        order=None)
+    if obj.exists():
+        check = 1
+    else:
+        check = 0
+    data = {
+        'check': check
+    }
+    return JsonResponse(data)
+
+
 def update_cart(request):
     pk = request.GET.get('primaryKey')
     quantity = request.GET.get('quantity')
@@ -182,7 +209,7 @@ class AddressCreate(LoginRequiredMixin, CreateView):
 def order_create(request, pk):
     item_list = OrderItem.objects.filter(customer=request.user.customer).filter(order=None)
     order_obj = Order()
-    orderpk= order_obj.pk
+
     order_obj.customer = request.user.customer
     order_obj.address = Address.objects.get(pk=pk)
     sum_of_item = 0
@@ -192,17 +219,18 @@ def order_create(request, pk):
         item.order = order_obj
         item.save()
     order_obj.amount = sum_of_item
+    orderpk = order_obj.pk
     order_obj.save()
-    return reverse('online:ordersummary', orderpk)
+    return render(request, 'ordersummary.html', {'order': order_obj})
 
 
 def payment_request(request, pk):
     response = api.payment_request_create(
-        amount=20,
+        amount=10,
         purpose='Order id-{0}'.format(pk),
         send_email=True,
-        email='siva999skr@gmail.com',
-        redirect_url=redirect('online:paymentredirect', pk=pk)
+        email=request.user.email,
+        redirect_url=request.build_absolute_uri(reverse('online:paymentsuccess', args=(pk,)))
     )
     payment_request_id = response['payment_request']['id']
     payment_status = response['payment_request']['status']
@@ -243,7 +271,7 @@ class CustomerCreation(CreateView):
 class Profile(DetailView):
     model = User
     template_name = 'profile.html'
-    context_object_name = 'customer'
+    context_object_name = 'user'
 
 
 class OrderSummary(DetailView):
@@ -261,15 +289,14 @@ class OrderList(ListView):
         return Order.objects.filter(customer=self.request.user.customer)
 
 
-class PaymentRedirect(RedirectView):
-
-    def get(self, request, *args, **kwargs):
-        payment_id = self.request.GET['payment_id']
-        payment_status = self.request.GET['payment_status']
-        payment_request_id = self.request.GET['payment_request_id']
-        order = Order.Objects.get(id=kwargs['pk'])
-        order.payment.payment_id = payment_id
-        order.payment.payment_status = payment_status
-        order.payment_success = True
-        order.payment.save()
-        order.save()
+def payment_success(request, pk):
+    payment_id = request.GET['payment_id']
+    payment_status = request.GET['payment_status']
+    payment_request_id = request.GET['payment_request_id']
+    order = Order.objects.get(pk=pk)
+    order.payment.payment_id = payment_id
+    order.payment.payment_status = payment_status
+    order.payment_success = True
+    order.payment.save()
+    order.save()
+    return

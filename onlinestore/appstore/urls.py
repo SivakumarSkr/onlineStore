@@ -14,6 +14,8 @@ urlpatterns = [
     path('deletecart/', clear_cart, name='clearcart'),
     path('ajax/get_number/', get_no_items, name='get_number'),
     path('ajax/updatecart/', update_cart, name='updatecart'),
+    path('ajax/getcheck/', check_cart, name='checkcart'),
+    path('ajax/get_total/', get_total, name='gettotal'),
     path('categories/', CategoryList.as_view(), name='categorylist'),
     path('message_create/', MessageCreate.as_view(), name='message_create'),
     path('order_create/<int:pk>/', order_create, name='order_create'),
@@ -22,7 +24,7 @@ urlpatterns = [
     path('customercreate/', CustomerCreation.as_view(), name='customercreate'),
     path('profile/<int:pk>/', Profile.as_view(), name='profile'),
     path('orders/', OrderList.as_view(), name='orderlist'),
-    path('paymentconfirm/<int:pk>/', PaymentRedirect.as_view(), name='paymentredirect'),
+    path('paymentconfirm/<int:pk>/', payment_success, name='paymentsuccess'),
     path('ordersummary/<int:pk>/', OrderSummary.as_view(), name='ordersummary'),
     path('payment_create/<int:pk>/', payment_request, name='payment-create'),
 ]

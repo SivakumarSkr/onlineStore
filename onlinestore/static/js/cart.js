@@ -236,6 +236,16 @@ $('.quantity_change').change(function(){
                 $('#total').text(totalSum);
                 }
             })
+    $.ajax({
+        url:'/ajax/get_total/',
+        data:{},
+        dataType:'json',
+        success: function(data){
+            $('#subtotal').text(data.total);
+            $('#total').text(data.total)
+        }
+
+    })
 })
     function updateItem(x, y, z){
         $.ajax({
