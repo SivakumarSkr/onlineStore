@@ -201,17 +201,25 @@ class AddressCreate(LoginRequiredMixin, CreateView):
     form_class = AddressForm
     template_name = 'checkout.html'
 
+    def form_valid(self, form):
+        model = form.save()
+        order_obj = Order.objects.get(pk=self.kwargs['pk'])
+        order_obj.address = model
+        order_obj.save()
+        return super(AddressCreate, self).form_valid(form)
+
     def get_success_url(self):
-        return reverse_lazy('online:order_create', args=(self.object.pk,))
+        return reverse_lazy('online:ordersummary', kwargs={'pk':self.object.order.pk})
+            # render(self.request, 'ordersummary.html', {'order': self.object.order})
 
 
 @login_required
-def order_create(request, pk):
+def order_create(request):
     item_list = OrderItem.objects.filter(customer=request.user.customer).filter(order=None)
     order_obj = Order()
 
     order_obj.customer = request.user.customer
-    order_obj.address = Address.objects.get(pk=pk)
+    # order_obj.address = Address.objects.get(pk=pk)
     sum_of_item = 0
     order_obj.save()
     for item in item_list:
@@ -221,7 +229,7 @@ def order_create(request, pk):
     order_obj.amount = sum_of_item
     orderpk = order_obj.pk
     order_obj.save()
-    return render(request, 'ordersummary.html', {'order': order_obj})
+    return redirect('online:checkout', pk=orderpk)
 
 
 def payment_request(request, pk):
@@ -229,6 +237,9 @@ def payment_request(request, pk):
         amount=10,
         purpose='Order id-{0}'.format(pk),
         send_email=True,
+        buyer_name=request.user.customer.name,
+        phone=str(request.user.customer.contact_no),
+        send_sms=True,
         email=request.user.email,
         redirect_url=request.build_absolute_uri(reverse('online:paymentsuccess', args=(pk,)))
     )
@@ -299,4 +310,4 @@ def payment_success(request, pk):
     order.payment_success = True
     order.payment.save()
     order.save()
-    return
+    return render(request, 'payment_success.html', {'order': order})

@@ -90,7 +90,7 @@ class Order(models.Model):
     code = models.UUIDField('Order ID', default=uuid.uuid1)
     date = models.DateTimeField('Date of order', default=datetime.datetime.now)
     customer = models.ForeignKey(Customer, verbose_name='Customer', on_delete=models.CASCADE)
-    address = models.OneToOneField(Address, on_delete=models.PROTECT)
+    address = models.OneToOneField(Address, on_delete=models.PROTECT, null=True)
     amount = models.PositiveIntegerField('Amount', default=0)
     payment_success = models.BooleanField(default=False)
 
