@@ -120,10 +120,12 @@ def sign_up(request):
 
 
 @login_required
-def delete_item(request, pk):
-    obj = OrderItem.objects.get(id=pk)
+def delete_item(request):
+    pk = request.GET.get('pk')
+    obj = OrderItem.objects.get(id=int(pk))
     obj.delete()
-    return redirect('online:cart')
+    data = {}
+    return JsonResponse(data)
 
 
 @login_required
@@ -245,8 +247,11 @@ def payment_request(request, pk):
     )
     payment_request_id = response['payment_request']['id']
     payment_status = response['payment_request']['status']
+    order_obj = Order.objects.get(id=pk)
+    if order_obj.payment:
+        order_obj.payment.delete()
     payment = Payment(payment_request_id=payment_request_id, payment_status=payment_status)
-    payment.order = Order.objects.get(id=pk)
+    payment.order = order_obj
     payment.save()
     return HttpResponseRedirect(str(response['payment_request']['longurl']))
 

@@ -213,7 +213,30 @@ $(document).ready(function()
 //			});
 		}
 	}
+	$.ajax({
+        url:'/ajax/get_total/',
+        data:{},
+        dataType:'json',
+        success: function(data){
+            $('#subtotal').text(data.total);
+            $('#total').text(data.total)
+        }
 
+    })
+    $('#deleteitem').click(function(){
+    var pk = $('#deleteitem').attr('data-pk');
+    $('#item'+pk).remove()
+    $.ajax({
+
+        url:'/ajax/deleteorderitem/',
+        data:{'pk':pk},
+        dataType:'json',
+        success:function(data){
+
+        }
+
+    })
+    })
 });
 $('.quantity_change').change(function(){
     $.ajax({
@@ -236,16 +259,7 @@ $('.quantity_change').change(function(){
                 $('#total').text(totalSum);
                 }
             })
-    $.ajax({
-        url:'/ajax/get_total/',
-        data:{},
-        dataType:'json',
-        success: function(data){
-            $('#subtotal').text(data.total);
-            $('#total').text(data.total)
-        }
 
-    })
 })
     function updateItem(x, y, z){
         $.ajax({

@@ -19,9 +19,41 @@
 <div class="home">
 
     {% for ord in order %}
-    <div class="jumbotron">
-    <a href="{% url 'online:ordersummary' ord.pk %}">{{ ord.code }}</a>
+    <div class="jumbotron text-center" style="color:black">
+        <div class="row">
+            <div class="col-sm-6">
+                <div>
+                    <p>Order id - {{ ord.code }}</p>
+                    <ul>
+                        {% for item in ord.orderitem_set.all %}
+                        <li> {{ item.no_of_items }} * {{ item.item.name }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <ul>
+                    <li>{{ ord.date }}</li>
+                    <li>&#x20B9;{{ ord.amount }}</li>
+                    <li>{% if ord.payment_success %}payment is success
+                        {% else %}payment is pending{% endif %}
+
+                    </li>
+                </ul>
+                <div class="row">
+                    <div class="col-sm-6">
+                    </div>
+                    <div class="col-sm-6">
+                        {% if ord.payment_success %}
+                        <a href="{% url 'online:ordersummary' ord.pk %}">View summary</a>
+                        {% else %}
+                        <a href="{% url 'online:payment-create' ord.pk %}">pay this</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
     {% endfor %}
 
 </div>
