@@ -211,8 +211,8 @@ class AddressCreate(LoginRequiredMixin, CreateView):
         return super(AddressCreate, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('online:ordersummary', kwargs={'pk':self.object.order.pk})
-            # render(self.request, 'ordersummary.html', {'order': self.object.order})
+        return reverse_lazy('online:ordersummary', kwargs={'pk': self.object.order.pk})
+        # render(self.request, 'ordersummary.html', {'order': self.object.order})
 
 
 @login_required
@@ -235,25 +235,32 @@ def order_create(request):
 
 
 def payment_request(request, pk):
-    response = api.payment_request_create(
-        amount=10,
-        purpose='Order id-{0}'.format(pk),
-        send_email=True,
-        buyer_name=request.user.customer.name,
-        phone=str(request.user.customer.contact_no),
-        send_sms=True,
-        email=request.user.email,
-        redirect_url=request.build_absolute_uri(reverse('online:paymentsuccess', args=(pk,)))
-    )
-    payment_request_id = response['payment_request']['id']
-    payment_status = response['payment_request']['status']
     order_obj = Order.objects.get(id=pk)
-    if order_obj.payment:
-        order_obj.payment.delete()
-    payment = Payment(payment_request_id=payment_request_id, payment_status=payment_status)
-    payment.order = order_obj
-    payment.save()
-    return HttpResponseRedirect(str(response['payment_request']['longurl']))
+    if not order_obj.address:
+        return redirect('online:checkout', pk=order_obj.pk)
+    else:
+        response = api.payment_request_create(
+            amount=10,
+            purpose='Order id-{0}'.format(pk),
+            send_email=True,
+            buyer_name=request.user.customer.name,
+            phone=str(request.user.customer.contact_no),
+            send_sms=True,
+            email=request.user.email,
+            redirect_url=request.build_absolute_uri(reverse('online:paymentsuccess', args=(pk,)))
+        )
+        payment_request_id = response['payment_request']['id']
+        payment_status = response['payment_request']['status']
+        try:
+            if order_obj.payment:
+                order_obj.payment.delete()
+
+        except:
+            pass
+        payment = Payment(payment_request_id=payment_request_id, payment_status=payment_status)
+        payment.order = order_obj
+        payment.save()
+        return HttpResponseRedirect(str(response['payment_request']['longurl']))
 
 
 class ProductAutoComplete(autocomplete.Select2QuerySetView):
@@ -302,7 +309,7 @@ class OrderList(ListView):
     context_object_name = 'order'
 
     def get_queryset(self):
-        return Order.objects.filter(customer=self.request.user.customer)
+        return Order.objects.filter(customer=self.request.user.customer).order_by('-date')
 
 
 def payment_success(request, pk):
@@ -316,3 +323,6 @@ def payment_success(request, pk):
     order.payment.save()
     order.save()
     return render(request, 'payment_success.html', {'order': order})
+
+
+

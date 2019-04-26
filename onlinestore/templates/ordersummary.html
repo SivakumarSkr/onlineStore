@@ -2,10 +2,11 @@
 <head>
     {% load static %}
     {% block header %}
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/main_styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/responsive.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'order/bootstrap/css/bootstrap.min.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'order/font-awesome/css/font-awesome.min.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'styles/main_styles.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'styles/responsive.css' %}">
+
     <script type="text/javascript" src="{% static 'order/js/jquery-1.10.2.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'order/bootstrap/js/bootstrap.min.js' %}"></script>
 <style>
@@ -31,18 +32,19 @@
             <div class="text-center">
                 <i class="fa fa-search-plus pull-left icon"></i>
                 <h2>Invoice for purchase #{{ order.pk }}</h2>
+
             </div>
             <hr>
             <div class="row">
                 <div class="col-xs-12 col-md-3 col-lg-3 pull-left">
                     <div class="panel panel-default height">
-                        <div class="panel-heading">Billing Details</div>
+                        <div class="panel-heading">Customer Details</div>
                         <div class="panel-body">
-                            <strong>David Peere:</strong><br>
-                            1111 Army Navy Drive<br>
-                            Arlington<br>
-                            VA<br>
-                            <strong>22 203</strong><br>
+                            <strong>{{ order.customer.name }}</strong><br>
+                            contact no: {{ order.customer.contact_no }}<br>
+                            {{ request.user.email }}<br>
+                            <!--VA<br>-->
+                            <!--<strong>22 203</strong><br>-->
                         </div>
                     </div>
                 </div>
@@ -71,11 +73,11 @@
                     <div class="panel panel-default height">
                         <div class="panel-heading">Shipping Address</div>
                         <div class="panel-body">
-                            <strong>David Peere:</strong><br>
-                            1111 Army Navy Drive<br>
-                            Arlington<br>
-                            VA<br>
-                            <strong>22 203</strong><br>
+                            <strong>{{ order.customer.name }}</strong><br>
+                            {{ order.address.address }}<br>
+                            {{ order.address.city }}<br>
+                            {{ order.address.district }}<br>
+                            <strong>{{ order.address.pin_code }}</strong><br>
                         </div>
                     </div>
                 </div>
@@ -134,6 +136,16 @@
             </div>
         </div>
     </div>
+
+    <div>
+        {% if not order.payment.payment_id %}
+        <a class="btn btn-primary btn-block" href="{% url 'online:payment-create' order.pk %}">Pay this</a>
+        {% else %}
+        <a class="btn btn-primary btn-block" href="{% url 'online:home' %}">Go to Home</a>
+        {% endif %}
+    </div>
+
+
 </div>
 
 <style>
