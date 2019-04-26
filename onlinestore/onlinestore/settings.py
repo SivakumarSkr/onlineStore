@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
     'appstore',
     'dal',
     'dal_select2',
@@ -158,3 +159,9 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 INSTAMOJO_API_KEY = env('INSTAMOJO_API_KEY')
 INSTAMOJO_API_TOKEN = env('INSTAMOJO_API_TOKEN')
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
+

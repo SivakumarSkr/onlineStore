@@ -14,7 +14,8 @@ from django.http import HttpResponseRedirect
 from dal import autocomplete
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-
+from rest_framework import viewsets
+from .serializers import *
 import os
 
 from .models import *
@@ -328,3 +329,19 @@ def payment_success(request, pk):
     order.payment.save()
     order.save()
     return render(request, 'payment_success.html', {'order': order})
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
+
+
+class OrderViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializers

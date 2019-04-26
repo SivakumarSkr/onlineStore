@@ -153,13 +153,14 @@
 						<!-- Product -->
 						{% for p in index_list %}
 							<div class="product">
-
+								<a href="{% url 'online:product' p.pk %}">
 								<div class="product_image"><img src="{{ p.image.url }}" alt=""></div>
 								<div class="product_extra product_new"><a href="categories.html">New</a></div>
 								<div class="product_content">
 									<div class="product_title"><a href="{% url 'online:product' p.pk %}">{{ p.name }}</a></div>
 									<div class="product_price">{{ p.price }}</div>
 								</div>
+								</a>
 							</div>
 						{% endfor %}
 
