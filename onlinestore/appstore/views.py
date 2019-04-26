@@ -12,16 +12,15 @@ from instamojo_wrapper import Instamojo
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from dal import autocomplete
+from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
+
 import os
 
 from .models import *
 
 api = Instamojo(api_key=settings.INSTAMOJO_API_KEY,
                 auth_token=settings.INSTAMOJO_API_TOKEN)
-
-
-def view(request):
-    return render(request, 'index.html')
 
 
 class Index(TemplateView):
@@ -73,10 +72,11 @@ class CartList(LoginRequiredMixin, ListView):
 def cart_create(request, pk):
     obj = OrderItem()
     obj.item = Product.objects.get(pk=pk)
-    obj.no_of_items = 0
-    obj.total = 0
+    obj.no_of_items = 1
+    obj.total = obj.item.price
     obj.customer = request.user.customer
     obj.save()
+    messages.success(request, 'Product is added to cart')
     return redirect('online:cart')
 
 
@@ -84,22 +84,6 @@ class OrderDetail(LoginRequiredMixin, DetailView):
     model = Order
     template_name = ''
     context_object_name = 'orderd'
-
-
-class SignUp(CreateView):
-    model = User
-    form_class = UserCreationForm
-    template_name = 'registration/signup.html'
-    success_url = reverse_lazy('online:customercreate')
-
-    def form_valid(self, form):
-        form.save()
-        username = self.request.POST['username']
-        password = self.request.POST['password1']
-        print(username, password)
-        user = authenticate(username=username, password=password)
-        login(self.request, user)
-        return super(SignUp, self).form_valid(form)
 
 
 def sign_up(request):
@@ -125,6 +109,7 @@ def delete_item(request):
     obj = OrderItem.objects.get(id=int(pk))
     obj.delete()
     data = {}
+    messages.success(request, 'Item is removed from cart')
     return JsonResponse(data)
 
 
@@ -133,9 +118,11 @@ def clear_cart(request):
     obj_list = OrderItem.objects.filter(order__isnull=True).filter(customer=request.user.customer)
     for i in obj_list:
         i.delete()
+    messages.success(request, 'Cart is cleared')
     return redirect('online:cart')
 
 
+@login_required
 def get_no_items(request):
     data = {
         'number': OrderItem.objects.filter(customer=request.user.customer).filter(order=None).count()
@@ -143,6 +130,7 @@ def get_no_items(request):
     return JsonResponse(data)
 
 
+@login_required
 def get_total(request):
     total = 0
     for i in OrderItem.objects.filter(customer=request.user.customer).filter(order=None):
@@ -154,6 +142,7 @@ def get_total(request):
     return JsonResponse(data)
 
 
+@login_required
 def check_cart(request):
     pk = request.GET.get('pk')
     print(pk)
@@ -169,6 +158,7 @@ def check_cart(request):
     return JsonResponse(data)
 
 
+@login_required
 def update_cart(request):
     pk = request.GET.get('primaryKey')
     quantity = request.GET.get('quantity')
@@ -184,7 +174,7 @@ def update_cart(request):
     return JsonResponse(data)
 
 
-class MessageCreate(LoginRequiredMixin, CreateView):
+class MessageCreate(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = Message
     form_class = MessageForm
     template_name = 'contact.html'
@@ -214,6 +204,13 @@ class AddressCreate(LoginRequiredMixin, CreateView):
         return reverse_lazy('online:ordersummary', kwargs={'pk': self.object.order.pk})
         # render(self.request, 'ordersummary.html', {'order': self.object.order})
 
+    def get_context_data(self, **kwargs):
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        kwargs['order'] = Order.objects.get(pk=self.kwargs['pk'])
+        return super().get_context_data(**kwargs)
+
 
 @login_required
 def order_create(request):
@@ -228,15 +225,21 @@ def order_create(request):
         sum_of_item += item.total
         item.order = order_obj
         item.save()
+    if sum_of_item <= 0:
+        messages.warning(request, 'Cart is empty')
+        return redirect('online:cart')
     order_obj.amount = sum_of_item
     orderpk = order_obj.pk
     order_obj.save()
+    messages.success(request, 'order is created')
     return redirect('online:checkout', pk=orderpk)
 
 
+@login_required
 def payment_request(request, pk):
     order_obj = Order.objects.get(id=pk)
     if not order_obj.address:
+        messages.warning(request, 'please give shipping address')
         return redirect('online:checkout', pk=order_obj.pk)
     else:
         response = api.payment_request_create(
@@ -278,11 +281,12 @@ class ProductSearch(FormView):
     form_class = Example
 
 
-class CustomerCreation(CreateView):
+class CustomerCreation(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = Customer
     template_name = 'registration/customer.html'
     form_class = CustomerForm
     success_url = reverse_lazy('online:home')
+    success_message = 'Profile is created'
 
     def form_valid(self, form):
         model = form.save(commit=False)
@@ -291,19 +295,19 @@ class CustomerCreation(CreateView):
         return super(CustomerCreation, self).form_valid(form)
 
 
-class Profile(DetailView):
+class Profile(LoginRequiredMixin, DetailView):
     model = User
     template_name = 'profile.html'
     context_object_name = 'user'
 
 
-class OrderSummary(DetailView):
+class OrderSummary(LoginRequiredMixin, DetailView):
     model = Order
     template_name = 'ordersummary.html'
     context_object_name = 'order'
 
 
-class OrderList(ListView):
+class OrderList(LoginRequiredMixin, ListView):
     model = Order
     template_name = 'orderlist.html'
     context_object_name = 'order'
@@ -312,10 +316,11 @@ class OrderList(ListView):
         return Order.objects.filter(customer=self.request.user.customer).order_by('-date')
 
 
+@login_required
 def payment_success(request, pk):
     payment_id = request.GET['payment_id']
     payment_status = request.GET['payment_status']
-    payment_request_id = request.GET['payment_request_id']
+    # payment_request_id = request.GET['payment_request_id']
     order = Order.objects.get(pk=pk)
     order.payment.payment_id = payment_id
     order.payment.payment_status = payment_status
@@ -323,6 +328,3 @@ def payment_success(request, pk):
     order.payment.save()
     order.save()
     return render(request, 'payment_success.html', {'order': order})
-
-
-

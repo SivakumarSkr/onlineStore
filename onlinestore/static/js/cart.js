@@ -226,16 +226,16 @@ $(document).ready(function()
     $('#deleteitem').click(function(){
     var pk = $('#deleteitem').attr('data-pk');
     $('#item'+pk).remove()
-    $.ajax({
+        $.ajax({
 
-        url:'/ajax/deleteorderitem/',
-        data:{'pk':pk},
-        dataType:'json',
-        success:function(data){
+            url:'/ajax/deleteorderitem/',
+            data:{'pk':pk},
+            dataType:'json',
+            success:function(data){
 
-        }
+            }
 
-    })
+        })
     })
 });
 $('.quantity_change').change(function(){

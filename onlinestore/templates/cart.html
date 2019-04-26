@@ -9,6 +9,8 @@
 	<!-- Home -->
 
 	<div class="home">
+
+
 		<div class="home_container">
 			<div class="home_background" style="background-image:url(/media/images/cart.jpg)"></div>
 			<div class="home_content_container">
@@ -30,7 +32,17 @@
 			</div>
 		</div>
 	</div>
-
+	<div class="container message">
+		{% if messages %}
+			<ul>
+				{% for message in messages %}
+				<li><div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %}">
+				<strong>{{ message.tags }}!</strong> {{ message }}
+				</div></li>
+				{% endfor %}
+			</ul>
+		{% endif %}
+	</div>
 	<!-- Cart Info -->
 
 	<div class="cart_info">
@@ -52,6 +64,7 @@
 				<div class="col">
 
 					<!-- Cart Item -->
+					{% if cart %}
 					{% for i in cart %}
 
 					<div class="cart_item d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-start" id="item{{i.pk}}">
@@ -84,6 +97,12 @@
 						<div class="cart_item_total cart_item_total{{forloop.counter}}">{{i.total}}</div>
 					</div>
 					{% endfor %}
+					{% else %}
+					<br>
+					<div class="alert alert-danger">
+  						<strong>Error!</strong>Cart is empty. Add something.
+					</div>
+					{% endif %}
 
 				</div>
 

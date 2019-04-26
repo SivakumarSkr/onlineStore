@@ -14,10 +14,10 @@ class Address(models.Model):
     def pincode_validators(x):
         if len(str(x)) != 6:
             raise ValidationError('Invalid Pincode')
-    name = models.CharField('Name', max_length=30, null=True)
-    email = models.EmailField('Email', null=True)
-    phone = PhoneNumberField(null=True)
-    address = models.TextField('Address', max_length=500, null=True)
+    name = models.CharField('Name', max_length=30)
+    email = models.EmailField('Email')
+    phone = PhoneNumberField()
+    address = models.TextField('Address', max_length=500)
     city = models.CharField('City', max_length=50)
     district = models.CharField('District', max_length=20)
     pin_code = models.PositiveIntegerField('Pincode', validators=[pincode_validators])
