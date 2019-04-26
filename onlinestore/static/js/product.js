@@ -282,5 +282,24 @@ $(document).ready(function()
 	        });
 		}
 	}
+	var a = $('.product_quantity_container').attr('data-pk');
+    $.ajax({
+	    url:'/ajax/getcheck/',
+	    data:{
+	        'pk':a,
+	    },
+	    dataType: 'json',
+	    success:function(data){
+	        if (data.check === 1){
+
+                var button = $('.check');
+                button.css('pointer-events', 'none');
+                button.text('Already in cart')
+               }
+	    }
+	})
+
+
+
 
 });

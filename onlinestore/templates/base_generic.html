@@ -72,7 +72,9 @@
 													c0,7.5,6,13.5,13.5,13.5s13.5-6,13.5-13.5v-41h45.2l26.9,302.3C412.8,445.2,392.1,462,366.8,462z"/>
 											</g>
 										</svg>
-										<div>Cart (<span class="cart_no"></span> )</div>
+										<div>Cart (
+											{% if request.user.customer %}<span class="cart_no"></span>
+											{% endif %} )</div>
 									</a>
 								</div>
 								<div class="shopping_cart" style="margin-left:20px">
@@ -83,9 +85,9 @@
 											</div>
 											<ul>
 												{% if user.is_authenticated %}
-												<li><a href="product.html">Account</a></li>
-												<li><a href="cart.html">Orders</a></li>
-												<li><a href="{% url 'logout' %}?next={{request.path}}">Logout</a></li>
+												<li><a href="{% url 'online:profile' request.user.pk %}">Account</a></li>
+												<li><a href="{% url 'online:orderlist' %}">Orders</a></li>
+												<li><a href="{% url 'logout' %}">Logout</a></li>
 												{% else %}
 													<li><a href="{% url 'login' %}?next={{request.path}}">Login</a> </li>
 													<li><a href="{% url 'online:signup' %}">Signup</a> </li>
@@ -165,7 +167,7 @@
 				</div>
 				<ul class="page_menu_nav menu_mm">
 					<li class="page_menu_item has-children menu_mm">
-						<a href="index.html">Home</a> 							   <!--<i class="fa fa-angle-down"></i>-->
+						<a href="{% url 'online:home' %}">Home</a> 							   <!--<i class="fa fa-angle-down"></i>-->
 						<!--<ul class="page_menu_selection menu_mm">-->
 							<!--<li class="page_menu_item menu_mm"><a href="categories.html">Categories<i class="fa fa-angle-down"></i></a></li>-->
 							<!--<li class="page_menu_item menu_mm"><a href="product.html">Product<i class="fa fa-angle-down"></i></a></li>-->
@@ -175,7 +177,7 @@
 						<!--</ul>-->
 					</li>
 					<li class="page_menu_item has-children menu_mm">
-						<a href="categories.html">Categories</a>              		<!--<i class="fa fa-angle-down"></i>-->
+						<a href="{% url 'online:categorylist' %}">Categories</a>              		<!--<i class="fa fa-angle-down"></i>-->
 						<!--<ul class="page_menu_selection menu_mm">-->
 							<!--<li class="page_menu_item menu_mm"><a href="categories.html">Category<i class="fa fa-angle-down"></i></a></li>-->
 							<!--<li class="page_menu_item menu_mm"><a href="categories.html">Category<i class="fa fa-angle-down"></i></a></li>-->
@@ -183,9 +185,8 @@
 							<!--<li class="page_menu_item menu_mm"><a href="categories.html">Category<i class="fa fa-angle-down"></i></a></li>-->
 						<!--</ul>-->
 					</li>
-					<li class="page_menu_item menu_mm"><a href="index.html">Accessories<i class="fa fa-angle-down"></i></a></li>
-					<li class="page_menu_item menu_mm"><a href="#">Offers<i class="fa fa-angle-down"></i></a></li>
-					<li class="page_menu_item menu_mm"><a href="contact.html">Contact<i class="fa fa-angle-down"></i></a></li>
+					<li class="page_menu_item menu_mm"><a href="#">Accessories<i class="fa fa-angle-down"></i></a></li>
+					<li class="page_menu_item menu_mm"><a href="{% url 'online:message_create' %}">Contact<i class="fa fa-angle-down"></i></a></li>
 				</ul>
 			</div>
 		</div>
@@ -201,40 +202,55 @@
 			</ul>
 		</div>
 	</div>
+</div>
 	{% block content %}
 
     {% endblock %}
 
     	<!-- Footer -->
 
-	<div class="footer_overlay"></div>
-	<footer class="footer">
-		<div class="footer_background" style="background-image:url(/media/images/footer.jpg)"></div>
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<div class="footer_content d-flex flex-lg-row flex-column align-items-center justify-content-lg-start justify-content-center">
-						<div class="footer_logo"><a href="#">Sublime.</a></div>
-<div class="copyright ml-auto mr-auto"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></div>
+	<!--<div class="footer_overlay"></div>-->
+	<!--<footer class="footer">-->
+		<!--<div class="footer_background" style="background-image:url(/media/images/footer.jpg)"></div>-->
+		<!--<div class="container">-->
+			<!--<div class="row">-->
+				<!--<div class="col">-->
+					<!--<div class="footer_content d-flex flex-lg-row flex-column align-items-center justify-content-lg-start justify-content-center">-->
+						<!--<div class="footer_logo"><a href="#">Sublime.</a></div>-->
+<!--<div class="copyright ml-auto mr-auto">&lt;!&ndash; Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. &ndash;&gt;-->
+<!--Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>-->
+<!--&lt;!&ndash; Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. &ndash;&gt;</div>-->
 
-						<div class="footer_social ml-lg-auto">
-							<ul>
-								<li><a href="#"><i class="fa fa-pinterest" aria-hidden="true"></i></a></li>
-								<li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
-								<li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
-								<li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</footer>
-</div>
+						<!--<div class="footer_social ml-lg-auto">-->
+							<!--<ul>-->
+								<!--<li><a href="#"><i class="fa fa-pinterest" aria-hidden="true"></i></a></li>-->
+								<!--<li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>-->
+								<!--<li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>-->
+								<!--<li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>-->
+							<!--</ul>-->
+						<!--</div>-->
+					<!--</div>-->
+				<!--</div>-->
+			<!--</div>-->
+		<!--</div>-->
+	<!--</footer>-->
+<!--</div>-->
 
 <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+
+<script src="{% static 'styles/bootstrap4/popper.js' %}"></script>
+<script src="{% static 'styles/bootstrap4/bootstrap.min.js' %}"></script>
+<script src="{% static 'plugins/greensock/TweenMax.min.js' %}"></script>
+<script src="{% static 'plugins/greensock/TimelineMax.min.js' %}"></script>
+<script src="{% static 'plugins/scrollmagic/ScrollMagic.min.js' %}"></script>
+<script src="{% static 'plugins/greensock/animation.gsap.min.js' %}"></script>
+<script src="{% static 'plugins/greensock/ScrollToPlugin.min.js' %}"></script>
+
+{% block scripts %}
+
+{% endblock %}
+{% if user.customer %}
+
 <script>
 	$.ajax({
 		url:'/ajax/get_number/',
@@ -246,15 +262,6 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 
 	})
 </script>
-<script src="{% static 'styles/bootstrap4/popper.js' %}"></script>
-<script src="{% static 'styles/bootstrap4/bootstrap.min.js' %}"></script>
-<script src="{% static 'plugins/greensock/TweenMax.min.js' %}"></script>
-<script src="{% static 'plugins/greensock/TimelineMax.min.js' %}"></script>
-<script src="{% static 'plugins/scrollmagic/ScrollMagic.min.js' %}"></script>
-<script src="{% static 'plugins/greensock/animation.gsap.min.js' %}"></script>
-<script src="{% static 'plugins/greensock/ScrollToPlugin.min.js' %}"></script>
-{% block scripts %}
-
-{% endblock %}
+{% endif %}
 </body>
 </html>

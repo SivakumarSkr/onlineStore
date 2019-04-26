@@ -44,7 +44,7 @@
 						<div class="section_title">Billing Address</div>
 						<div class="section_subtitle">Enter your address info</div>
 						<div class="checkout_form_container">
-							<form action="{% url 'online:checkout' %}" id="checkout_form" method="post">
+							<form action="" id="checkout_form" method="post" style="color:black;">
 								{% csrf_token %}
 								{{ form|crispy }}
 								<button type="submit" style="display:none;">Submit</button>
@@ -89,7 +89,7 @@
 
 						<!-- Order Text -->
 						<div class="order_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pharetra temp or so dales. Phasellus sagittis auctor gravida. Integ er bibendum sodales arcu id te mpus. Ut consectetur lacus.</div>
-						<div class="button order_button"><a id="submit_button" type="submit">Place Order</a></div>
+						<div class="button order_button"><a href="#" id="submit_button" type="submit">Place Order</a></div>
 					</div>
 				</div>
 			</div>

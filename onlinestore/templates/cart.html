@@ -54,15 +54,15 @@
 					<!-- Cart Item -->
 					{% for i in cart %}
 
-					<div class="cart_item d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-start">
+					<div class="cart_item d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-start" id="item{{i.pk}}">
 						<!-- Name -->
 						<div class="cart_item_product d-flex flex-row align-items-center justify-content-start">
 							<div class="cart_item_image">
 								<div><img src="{{ i.item.image.url }}" alt=""></div>
 							</div>
 							<div class="cart_item_name_container">
-								<div class="cart_item_name"><a href="#">{{ i.item.name }}</a></div>
-								<div class="cart_item_edit"><a href="{% url 'online:deleteitem' i.pk %}">Delete item</a></div>
+								<div class="cart_item_name"><a href="{% url 'online:product' i.item.pk %}">{{ i.item.name }}</a></div>
+								<div class="cart_item_edit"><a href="#" data-pk="{{i.pk}}" id="deleteitem">Delete item</a></div>
 							</div>
 						</div>
 						<!-- Price -->
@@ -158,7 +158,7 @@
 								</li>
 							</ul>
 						</div>
-						<div class="button checkout_button"><a href="{% url 'online:checkout' %}">Proceed to checkout</a></div>
+						<div class="button checkout_button"><a href="{% url 'online:order_create' %}">Proceed to checkout</a></div>
 					</div>
 				</div>
 			</div>

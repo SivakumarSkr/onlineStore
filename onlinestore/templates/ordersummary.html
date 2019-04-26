@@ -1,0 +1,182 @@
+{% extends 'base_generic.html' %}
+<head>
+    {% load static %}
+    {% block header %}
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/main_styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/responsive.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'order/bootstrap/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'order/font-awesome/css/font-awesome.min.css' %}" />
+
+    <script type="text/javascript" src="{% static 'order/js/jquery-1.10.2.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'order/bootstrap/js/bootstrap.min.js' %}"></script>
+<style>
+.home
+    {
+	width: 100%;
+	background: #FFFFFF;
+	z-index: 2;
+	padding-top: 130px;
+	padding-left: 60px;
+	padding-right: 60px;
+}
+</style>
+    {% endblock %}
+{% block content %}
+
+<div class="container">
+
+<!-- Simple Invoice - START -->
+<div class="container home">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="text-center">
+                <i class="fa fa-search-plus pull-left icon"></i>
+                <h2>Invoice for purchase #{{ order.pk }}</h2>
+
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-xs-12 col-md-3 col-lg-3 pull-left">
+                    <div class="panel panel-default height">
+                        <div class="panel-heading">Customer Details</div>
+                        <div class="panel-body">
+                            <strong>{{ order.customer.name }}</strong><br>
+                            contact no: {{ order.customer.contact_no }}<br>
+                            {{ request.user.email }}<br>
+                            <!--VA<br>-->
+                            <!--<strong>22 203</strong><br>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3">
+                    <div class="panel panel-default height">
+                        <div class="panel-heading">Payment Information</div>
+                        <div class="panel-body">
+                            <strong>Card Name:</strong> Visa<br>
+                            <strong>Card Number:</strong> ***** 332<br>
+                            <strong>Exp Date:</strong> 09/2020<br>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3">
+                    <div class="panel panel-default height">
+                        <div class="panel-heading">Order Preferences</div>
+                        <div class="panel-body">
+                            <strong>Gift:</strong> No<br>
+                            <strong>Express Delivery:</strong> Yes<br>
+                            <strong>Insurance:</strong> No<br>
+                            <strong>Coupon:</strong> No<br>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 pull-right">
+                    <div class="panel panel-default height">
+                        <div class="panel-heading">Shipping Address</div>
+                        <div class="panel-body">
+                            <strong>{{ order.customer.name }}</strong><br>
+                            {{ order.address.address }}<br>
+                            {{ order.address.city }}<br>
+                            {{ order.address.district }}<br>
+                            <strong>{{ order.address.pin_code }}</strong><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="text-center"><strong>Order summary</strong></h3>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <td><strong>Item Name</strong></td>
+                                    <td class="text-center"><strong>Item Price</strong></td>
+                                    <td class="text-center"><strong>Item Quantity</strong></td>
+                                    <td class="text-right"><strong>Total</strong></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for o_item in order.orderitem_set.all %}
+                                <tr>
+                                    <td>{{ o_item.item.name }}</td>
+                                    <td class="text-center">&#x20B9;{{ o_item.item.price }}</td>
+                                    <td class="text-center">{{ o_item.no_of_items }}</td>
+                                    <td class="text-right">&#x20B9;{{ o_item.total }}</td>
+                                </tr>
+                            {% endfor %}
+
+                                <tr>
+                                    <td class="highrow"></td>
+                                    <td class="highrow"></td>
+                                    <td class="highrow text-center"><strong>Subtotal</strong></td>
+                                    <td class="highrow text-right">&#x20B9;{{ order.amount }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="emptyrow"></td>
+                                    <td class="emptyrow"></td>
+                                    <td class="emptyrow text-center"><strong>Shipping</strong></td>
+                                    <td class="emptyrow text-right">$20</td>
+                                </tr>
+                                <tr>
+                                    <td class="emptyrow"><i class="fa fa-barcode iconbig"></i></td>
+                                    <td class="emptyrow"></td>
+                                    <td class="emptyrow text-center"><strong>Total</strong></td>
+                                    <td class="emptyrow text-right">$978.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        {% if not order.payment.payment_id %}
+        <a class="btn btn-primary btn-block" href="{% url 'online:payment-create' order.pk %}">Pay this</a>
+        {% else %}
+        <a class="btn btn-primary btn-block" href="{% url 'online:home' %}">Go to Home</a>
+        {% endif %}
+    </div>
+
+
+</div>
+
+<style>
+.height {
+    min-height: 200px;
+}
+
+.icon {
+    font-size: 47px;
+    color: #5CB85C;
+}
+
+.iconbig {
+    font-size: 77px;
+    color: #5CB85C;
+}
+
+.table > tbody > tr > .emptyrow {
+    border-top: none;
+}
+
+.table > thead > tr > .emptyrow {
+    border-bottom: none;
+}
+
+.table > tbody > tr > .highrow {
+    border-top: 3px solid;
+}
+</style>
+
+<!-- Simple Invoice - END -->
+
+</div>
+{% endblock %}

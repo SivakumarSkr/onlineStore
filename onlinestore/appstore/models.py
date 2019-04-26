@@ -27,7 +27,7 @@ class Customer(models.Model):
     user_details = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField('Name', max_length=50)
     contact_no = PhoneNumberField()
-    address = models.OneToOneField(Address, on_delete=models.CASCADE)
+    # address = models.OneToOneField(Address, on_delete=models.CASCADE)
     profile_pic = models.ImageField('Profile Picture', upload_to='profile/', default='profile/default.jpg')
 
     def __str__(self):
@@ -87,14 +87,17 @@ class Description(models.Model):
 
 
 class Order(models.Model):
-    order_id = models.UUIDField('Order ID', default=uuid.uuid1)
+    code = models.UUIDField('Order ID', default=uuid.uuid1)
     date = models.DateTimeField('Date of order', default=datetime.datetime.now)
     customer = models.ForeignKey(Customer, verbose_name='Customer', on_delete=models.CASCADE)
-    address = models.OneToOneField(Address, on_delete=models.PROTECT)
+    address = models.OneToOneField(Address, on_delete=models.PROTECT, null=True)
+    amount = models.PositiveIntegerField('Amount', default=0)
+    payment_success = models.BooleanField(default=False)
 
 
 class OrderItem(models.Model):
     item = models.ForeignKey(Product, verbose_name='Product', on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, verbose_name='Customer')
     no_of_items = models.PositiveIntegerField()
     order = models.ForeignKey(Order, verbose_name='order', on_delete=models.CASCADE, null=True)
     total = models.PositiveIntegerField()
@@ -103,24 +106,20 @@ class OrderItem(models.Model):
         return self.item.name
 
 
-class Invoice(models.Model):
-    invoice_id = models.UUIDField('invoice id', default=uuid.uuid4)
-    order_id = models.OneToOneField(Order, verbose_name='Order', on_delete=models.CASCADE)
-    invoice_date = models.DateTimeField(default=datetime.datetime.now)
-
-
 class Payment(models.Model):
+    order = models.OneToOneField(Order, on_delete=models.CASCADE)
     payment_date = models.DateTimeField(default=datetime.datetime.now)
-    payment_amount = models.PositiveIntegerField()
+    payment_request_id = models.CharField(max_length=25)
+    payment_id = models.CharField(max_length=25, null=True)
+    payment_status = models.CharField(max_length=20)
 
 
 class Message(models.Model):
-    # user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='User')
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, verbose_name='User', null=True)
     name = models.CharField('Name', max_length=50)
     subject = models.CharField('Subject', max_length=200)
     message = models.TextField('Message', max_length=1000)
 
     def __str__(self):
         return self.subject
-
 
