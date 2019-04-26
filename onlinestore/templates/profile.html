@@ -7,7 +7,19 @@
 <link rel="stylesheet" type="text/css" href="{% static 'styles/profile.css' %}">
 {% endblock %}
 {% block content %}
+
 <div class="container emp-profile">
+    <div class="container message">
+		{% if messages %}
+			<ul>
+				{% for message in messages %}
+				<li><div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %}">
+				<strong>{{ message.tags }}!</strong> {{ message }}
+				</div></li>
+				{% endfor %}
+			</ul>
+		{% endif %}
+	</div>
             <form method="post">
                 <div class="row">
                     <div class="col-md-4">

@@ -17,7 +17,17 @@
 {% endblock %}
 {% block content %}
 <div class="home">
-
+    <div class="container message">
+		{% if messages %}
+			<ul>
+				{% for message in messages %}
+				<li><div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %}">
+				<strong>{{ message.tags }}!</strong> {{ message }}
+				</div></li>
+				{% endfor %}
+			</ul>
+		{% endif %}
+	</div>
     {% for ord in order %}
     <div class="jumbotron text-center" style="color:black">
         <div class="row">

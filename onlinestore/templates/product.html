@@ -199,4 +199,25 @@
 <script src="{% static 'plugins/Isotope/isotope.pkgd.min.js' %}"></script>
 
 <script src="{% static 'js/product.js' %}"></script>
+{% if user.is_authenticated %}
+<script>
+    var a = $('.product_quantity_container').attr('data-pk');
+    $.ajax({
+	    url:'/ajax/getcheck/',
+	    data:{
+	        'pk':a,
+	    },
+	    dataType: 'json',
+	    success:function(data){
+	        if (data.check === 1){
+
+                var button = $('.check');
+                button.css('pointer-events', 'none');
+                button.text('Already in cart')
+               }
+	    }
+	})
+	{% endif %}
+
+</script>
 {% endblock %}
