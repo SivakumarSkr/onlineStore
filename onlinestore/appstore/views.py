@@ -66,7 +66,7 @@ class CartList(LoginRequiredMixin, ListView):
     context_object_name = 'cart'
 
     def get_queryset(self):
-        return OrderItem.objects.filter(customer=self.request.user.customer).filter(order=None)
+        return OrderItem.objects.filter(customer=self.request.user).filter(order=None)
 
 
 @login_required
@@ -75,7 +75,7 @@ def cart_create(request, pk):
     obj.item = Product.objects.get(pk=pk)
     obj.no_of_items = 1
     obj.total = obj.item.price
-    obj.customer = request.user.customer
+    obj.customer = request.user
     obj.save()
     messages.success(request, 'Product is added to cart')
     return redirect('online:cart')
@@ -116,7 +116,7 @@ def delete_item(request):
 
 @login_required
 def clear_cart(request):
-    obj_list = OrderItem.objects.filter(order__isnull=True).filter(customer=request.user.customer)
+    obj_list = OrderItem.objects.filter(order__isnull=True).filter(customer=request.user)
     for i in obj_list:
         i.delete()
     messages.success(request, 'Cart is cleared')
@@ -126,7 +126,7 @@ def clear_cart(request):
 @login_required
 def get_no_items(request):
     data = {
-        'number': OrderItem.objects.filter(customer=request.user.customer).filter(order=None).count()
+        'number': OrderItem.objects.filter(customer=request.user).filter(order=None).count()
     }
     return JsonResponse(data)
 
@@ -134,7 +134,7 @@ def get_no_items(request):
 @login_required
 def get_total(request):
     total = 0
-    for i in OrderItem.objects.filter(customer=request.user.customer).filter(order=None):
+    for i in OrderItem.objects.filter(customer=request.user).filter(order=None):
         total += i.total
     data = {
         'total': total,
@@ -147,7 +147,7 @@ def get_total(request):
 def check_cart(request):
     pk = request.GET.get('pk')
     print(pk)
-    obj = get_object_or_404(Product, pk=int(pk)).orderitem_set.all().filter(customer=request.user.customer).filter(
+    obj = get_object_or_404(Product, pk=int(pk)).orderitem_set.all().filter(customer=request.user).filter(
         order=None)
     if obj.exists():
         check = 1
@@ -183,7 +183,7 @@ class MessageCreate(SuccessMessageMixin, LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         model = form.save(commit=False)
-        customer = self.request.user.customer
+        customer = self.request.user
         model.customer = customer
         model.save()
         return super(MessageCreate, self).form_valid(form)
@@ -215,10 +215,10 @@ class AddressCreate(LoginRequiredMixin, CreateView):
 
 @login_required
 def order_create(request):
-    item_list = OrderItem.objects.filter(customer=request.user.customer).filter(order=None)
+    item_list = OrderItem.objects.filter(customer=request.user).filter(order=None)
     order_obj = Order()
 
-    order_obj.customer = request.user.customer
+    order_obj.customer = request.user
     # order_obj.address = Address.objects.get(pk=pk)
     sum_of_item = 0
     order_obj.save()
@@ -314,7 +314,7 @@ class OrderList(LoginRequiredMixin, ListView):
     context_object_name = 'order'
 
     def get_queryset(self):
-        return Order.objects.filter(customer=self.request.user.customer).order_by('-date')
+        return Order.objects.filter(customer=self.request.user).order_by('-date')
 
 
 @login_required
@@ -330,18 +330,3 @@ def payment_success(request, pk):
     order.save()
     return render(request, 'payment_success.html', {'order': order})
 
-
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
-
-
-class OrderViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializers

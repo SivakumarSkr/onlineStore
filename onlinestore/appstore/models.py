@@ -89,7 +89,7 @@ class Description(models.Model):
 class Order(models.Model):
     code = models.UUIDField('Order ID', default=uuid.uuid1)
     date = models.DateTimeField('Date of order', default=datetime.datetime.now)
-    customer = models.ForeignKey(Customer, verbose_name='Customer', on_delete=models.CASCADE)
+    customer = models.ForeignKey(User, verbose_name='Customer', on_delete=models.CASCADE)
     address = models.OneToOneField(Address, on_delete=models.PROTECT, null=True)
     amount = models.PositiveIntegerField('Amount', default=0)
     payment_success = models.BooleanField(default=False)
@@ -97,7 +97,7 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     item = models.ForeignKey(Product, verbose_name='Product', on_delete=models.CASCADE)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, verbose_name='Customer')
+    customer = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Customer')
     no_of_items = models.PositiveIntegerField()
     order = models.ForeignKey(Order, verbose_name='order', on_delete=models.CASCADE, null=True)
     total = models.PositiveIntegerField()
@@ -115,7 +115,7 @@ class Payment(models.Model):
 
 
 class Message(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, verbose_name='User', null=True)
+    customer = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='User', null=True)
     name = models.CharField('Name', max_length=50)
     subject = models.CharField('Subject', max_length=200)
     message = models.TextField('Message', max_length=1000)

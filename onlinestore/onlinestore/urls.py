@@ -21,20 +21,11 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from . import settings
 from rest_framework import routers
-from appstore import views
-
-
-router = routers.DefaultRouter()
-router.register('users', views.UserViewSet)
-router.register('orders', views.OrderViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('appstore.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
-
 ]
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
